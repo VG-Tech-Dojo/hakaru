@@ -7,21 +7,28 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
+	"fmt"
 )
 
 func main() {
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		db, err := sql.Open("mysql", "root:hakaru-pass@/hakarudb")
+		db, err := sql.Open("mysql", "root:hakaru-pass@/hakaru-db")
 		if err != nil {
 			panic(err.Error())
 		}
-		defer db.Close() // 関数がリターンする直前に呼び出される
+		defer db.Close()
 
-		// TODO: insertする
-		_, e := db.Query("SELECT * FROM users") //
+		stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
 		if e != nil {
 			panic(e.Error())
 		}
+
+		defer stmt.Close()
+
+		name := r.URL.Query().Get("name")
+		value := r.URL.Query().Get("value")
+
+		_, _ = stmt.Exec(name, value)
 
 		origin := r.Header.Get("Origin")
 		if origin != "" {
@@ -34,7 +41,34 @@ func main() {
 		w.Header().Set("Access-Control-Allow-Methods", "GET")
 	}
 
+	probe := func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("on probe:")
+
+		db, err := sql.Open("mysql", "root:hakaru-pass@/hakaru-db")
+		if err != nil {
+			panic(err.Error())
+		}
+		defer db.Close()
+
+		rows, e := db.Query("SELECT name, value FROM eventlog")
+		if e != nil {
+			panic(e.Error())
+		}
+
+		for rows.Next() {
+			var name string
+			var value int
+
+			if err := rows.Scan(&name, &value); err != nil {
+				log.Fatal(err)
+			}
+			fmt.Println(name, value)
+		}
+	}
+
+
 	http.HandleFunc("/hakaru", hakaruHandler)
+	http.HandleFunc("/probe", probe)
 
 	// start server
 	if err := http.ListenAndServe(":8081", nil); err != nil {
