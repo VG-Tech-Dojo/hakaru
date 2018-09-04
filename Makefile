@@ -34,3 +34,4 @@ run: main.go
 
 build: test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build
+
