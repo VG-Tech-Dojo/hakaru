@@ -11,8 +11,9 @@ import (
 )
 
 func main() {
+	dataSourceName := "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		db, err := sql.Open("mysql", "root:hakaru-pass@/hakaru-db")
+		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
 			panic(err.Error())
 		}
@@ -44,7 +45,7 @@ func main() {
 	probe := func(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("on probe:")
 
-		db, err := sql.Open("mysql", "root:hakaru-pass@/hakaru-db")
+		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
 			panic(err.Error())
 		}
