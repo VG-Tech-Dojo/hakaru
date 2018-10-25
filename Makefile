@@ -37,3 +37,4 @@ build: test
 
 artifacts.tgz: hakaru tools/
 	tar czf $@ $^
+
