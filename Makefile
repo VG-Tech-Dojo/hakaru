@@ -10,7 +10,7 @@ install: dep-ensure
 
 dep-ensure: Gopkg.toml
 	test -x $(GOPATH)/bin/dep || go get github.com/golang/dep/...
-	dep ensure -v -vendor-only
+	dep ensure -v -vendor-only=true
 
 dep-ensure-update: Gopkg.toml
 	which dep || go get github.com/golang/dep/...
@@ -27,13 +27,12 @@ fmt:
 	gofmt -w .
 
 test:
-	go test -v -tags=unit $$(go list ./...)
+	go test -v -tags=unit $$(go list ./... | grep -v '/vendor/')
 
 run: main.go
 	go run main.go
 
-build: test
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build
+build: test hakaru
 
 artifacts.tgz: hakaru tools/
 	tar czf $@ $^
