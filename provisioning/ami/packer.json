@@ -1,0 +1,74 @@
+{
+  "description": "hakaru app",
+
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
+      "region": "ap-northeast-1",
+
+      "ami_name": "hakaru - {{isotime \"20060102150405\"}}",
+      "ami_description": "hakaru application instance image",
+      "tags": {
+        "Name": "hakaru - {{isotime \"20060102150405\"}}",
+        "SourceAMI": "{{ .SourceAMI }}",
+        "SourceAMIName": "{{ .SourceAMIName }}"
+      },
+
+      "source_ami": "ami-08847abae18baa040",
+
+      "subnet_id": "subnet-0ecb2e120ef986658",
+      "security_group_id": "sg-0764c0aec74741fc7",
+      "associate_public_ip_address": true,
+      "ssh_username": "ec2-user",
+      "ssh_interface": "public_ip",
+      "instance_type": "t3.micro",
+      "sriov_support": true,
+      "ena_support": true
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "file",
+      "source": "./cloud.cfg.d/defaults.cfg",
+      "destination": "/tmp/00_defaults.cfg"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo mv /tmp/00_defaults.cfg  /etc/cloud/cloud.cfg.d/00_defaults.cfg",
+        "sudo chmod 0644 /etc/cloud/cloud.cfg.d/00_defaults.cfg",
+        "sudo chown -R root:root /etc/cloud/cloud.cfg.d/00_defaults.cfg"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "./scripts.tgz",
+      "destination": "/var/tmp/scripts.tgz"
+    },
+
+    {
+      "type": "shell",
+      "inline": [
+        "tar xvzf /var/tmp/scripts.tgz -C /var/tmp",
+        "sudo make -C /var/tmp/scripts"
+      ]
+    },
+
+    {
+      "type": "shell",
+      "inline": [
+        "sudo rm -f /tmp/files",
+        "sudo rm -f /ec2-user/.ssh/authorized_keys",
+        "sudo rm -f /etc/ssh/*_key /etc/ssh/*_key.pub",
+        "sudo rm -f /etc/udev/rules.d/70-persistent-net.rules"
+      ]
+    }
+  ],
+
+  "post-processors": []
+}
+

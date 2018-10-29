@@ -32,8 +32,6 @@ test:
 run: main.go
 	go run main.go
 
-build: test hakaru
-
 artifacts.tgz: hakaru tools/
 	tar czf $@ $^
 
