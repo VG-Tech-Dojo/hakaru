@@ -1,6 +1,10 @@
 {
   "description": "hakaru app",
 
+  "variables": {
+    "ARTIFACTS_COMMIT": ""
+  },
+
   "builders": [
     {
       "type": "amazon-ebs",
@@ -10,12 +14,14 @@
 
       "ami_name": "hakaru - {{isotime \"20060102150405\"}}",
       "ami_description": "hakaru application instance image",
+      "ami_users": [
+        "{{user `AWS_ACCOUNT_ID_ACS`}}"
+      ],
       "tags": {
         "Name": "hakaru - {{isotime \"20060102150405\"}}",
         "SourceAMI": "{{ .SourceAMI }}",
         "SourceAMIName": "{{ .SourceAMIName }}"
       },
-
       "source_ami": "ami-08847abae18baa040",
 
       "subnet_id": "subnet-0ecb2e120ef986658",
@@ -25,50 +31,35 @@
       "ssh_interface": "public_ip",
       "instance_type": "t3.micro",
       "sriov_support": true,
-      "ena_support": true
+      "ena_support": true,
+      "user_data_file": "{{template_dir}}/scripts/cloud.cfg.d/99_defaults.cfg"
     }
   ],
 
   "provisioners": [
     {
-      "type": "file",
-      "source": "./cloud.cfg.d/defaults.cfg",
-      "destination": "/tmp/00_defaults.cfg"
-    },
-    {
       "type": "shell",
       "inline": [
-        "sudo mv /tmp/00_defaults.cfg  /etc/cloud/cloud.cfg.d/00_defaults.cfg",
-        "sudo chmod 0644 /etc/cloud/cloud.cfg.d/00_defaults.cfg",
-        "sudo chown -R root:root /etc/cloud/cloud.cfg.d/00_defaults.cfg"
+        "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
       ]
     },
 
     {
       "type": "file",
-      "source": "./scripts.tgz",
+      "source": "{{template_dir}/scripts.tgz",
       "destination": "/var/tmp/scripts.tgz"
     },
-
     {
       "type": "shell",
+      "environment_vars": [
+        "ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
+      ],
       "inline": [
-        "tar xvzf /var/tmp/scripts.tgz -C /var/tmp",
+        "tar xvzf /var/tmp/scripts.tgz -C /home/ec2-user/deployment",
         "sudo make -C /var/tmp/scripts"
-      ]
-    },
-
-    {
-      "type": "shell",
-      "inline": [
-        "sudo rm -f /tmp/files",
-        "sudo rm -f /ec2-user/.ssh/authorized_keys",
-        "sudo rm -f /etc/ssh/*_key /etc/ssh/*_key.pub",
-        "sudo rm -f /etc/udev/rules.d/70-persistent-net.rules"
       ]
     }
   ],
 
   "post-processors": []
 }
-

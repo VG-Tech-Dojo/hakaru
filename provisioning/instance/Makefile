@@ -9,8 +9,8 @@ deploy: /etc/systemd/system/hakaru.service
 /opt/hakaru/bin:
 	mkdir -p /opt/hakaru/bin
 
-/opt/hakaru/bin/hakaru: hakaru /opt/hakaru/bin
-	cp hakaru /opt/hakaru/bin/hakaru
+/opt/hakaru/bin/hakaru: ../../hakaru /opt/hakaru/bin
+	cp ../../hakaru /opt/hakaru/bin/hakaru
 	chmod +x /opt/hakaru/bin/hakaru
 
 /etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru
