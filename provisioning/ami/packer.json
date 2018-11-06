@@ -30,6 +30,7 @@
       "ssh_username": "ec2-user",
       "ssh_interface": "public_ip",
       "instance_type": "t3.micro",
+      "iam_instance_profile": "hakaru",
       "sriov_support": true,
       "ena_support": true,
       "user_data_file": "{{template_dir}}/scripts/cloud.cfg.d/99_defaults.cfg"
