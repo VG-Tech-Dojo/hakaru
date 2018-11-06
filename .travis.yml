@@ -17,7 +17,6 @@ env:
     - GOARCH=amd64
 
 before_install:
-  - go get github.com/golang/dep/...
   - export PATH=$PATH:$GOPATH/bin
 
 install:
