@@ -36,7 +36,6 @@ addons:
     paths:
       - hakaru
       - tools
-      - provisioning/instance
     bucket: sunrise2018-hakaru-artifacts
     target_paths: latest:$TRAVIS_COMMIT
     s3_region: ap-northeast-1
