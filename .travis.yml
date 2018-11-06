@@ -29,7 +29,7 @@ script:
 cache:
   directories:
     - vendor
-    - $GOPATH/bin/dep
+    - $GOPATH/bin
 
 addons:
   artifacts:
