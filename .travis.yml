@@ -38,5 +38,5 @@ addons:
     paths:
       - artifacts.tgz
     bucket: sunrise2018-hakaru-artifacts
-    target_paths: latest:${TRAVIS_COMMIT:0:7}
+    target_paths: latest:$TRAVIS_COMMIT
     s3_region: ap-northeast-1
