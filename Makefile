@@ -9,12 +9,12 @@ all: install run
 install: dep-ensure
 
 dep-ensure: Gopkg.toml
-	which dep || go get github.com/golang/dep/...
-	dep ensure
+	test -x $(GOPATH)/bin/dep || go get github.com/golang/dep/...
+	dep ensure -v -vendor-only
 
 dep-ensure-update: Gopkg.toml
 	which dep || go get github.com/golang/dep/...
-	dep ensure --update
+	dep ensure -v --update
 
 Gopkg.toml:
 	which dep || go get github.com/golang/dep/...
