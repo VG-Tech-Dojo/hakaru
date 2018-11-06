@@ -1,4 +1,4 @@
-.PHONY: all install dep-ensure dep-ensure-update imports fmt test run build upload
+.PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
 
 GOOS   ?=
 GOARCH ?=
@@ -37,6 +37,9 @@ build: hakaru
 hakaru: test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $@
 
+clean:
+	rm -rf hakaru
+
 # deployment
 
 artifacts.tgz: hakaru tools provisioning/instance
@@ -46,6 +49,6 @@ export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 # ci からアップロードできなくなった場合のターゲット
-upload: artifacts.tgz
+upload: clean artifacts.tgz
 	aws s3 cp artifacts.tgz s3://sunrise2018-hakaru-artifacts/latest/artifacts.tgz
 	aws s3 cp artifacts.tgz s3://sunrise2018-hakaru-artifacts/$$(git rev-parse --short HEAD)/artifacts.tgz
