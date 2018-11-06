@@ -42,7 +42,7 @@ clean:
 
 # deployment
 
-artifacts.tgz: hakaru tools provisioning/instance
+artifacts.tgz: hakaru tools db provisioning/instance
 	tar czf $@ $^
 
 export AWS_PROFILE        ?= sunrise2018
