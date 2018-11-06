@@ -11,15 +11,14 @@ scripts.tgz: scripts
 clean:
 	-rm -rf *.tgz
 
-GIT_COMMIT       := $(shell git rev-parse --short HEAD)
-ARTIFACTS_COMMIT := $(shell aws s3 ls s3://sunrise2018-hakaru-artifacts/$(GIT_COMMIT)/artifacts.tgz >/dev/null 2>&1 && echo $(GIT_COMMIT) || echo latest)
+ARTIFACTS_COMMIT ?= $(shell git rev-parse --short HEAD)
 
 check_artifacts:
 	@echo 'artifacts checking ...'
 	@echo 'latest:'
-	@aws s3 ls s3://sunrise2018-hakaru-artifacts/latest/artifacts.tgz
-	@echo "$(GIT_COMMIT):"
-	@aws s3 ls s3://sunrise2018-hakaru-artifacts/$(GIT_COMMIT)/artifacts.tgz || echo 'missing.\n\nuse latest artifacts...'
+	aws s3 ls s3://sunrise2018-hakaru-artifacts/latest/artifacts.tgz
+	@echo "using:"
+	aws s3 ls s3://sunrise2018-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz
 
 build: packer.json scripts.tgz check_artifacts
 	docker run --rm -it \

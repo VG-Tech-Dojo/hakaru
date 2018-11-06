@@ -46,7 +46,7 @@
 
     {
       "type": "file",
-      "source": "{{template_dir}/scripts.tgz",
+      "source": "{{template_dir}}/scripts.tgz",
       "destination": "/var/tmp/scripts.tgz"
     },
     {
@@ -55,7 +55,8 @@
         "ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
       ],
       "inline": [
-        "tar xvzf /var/tmp/scripts.tgz -C /home/ec2-user/deployment",
+        "mkdir -p /var/tmp/scripts",
+        "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
         "sudo make -C /var/tmp/scripts"
       ]
     }

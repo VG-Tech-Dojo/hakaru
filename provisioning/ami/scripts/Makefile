@@ -14,7 +14,7 @@ yum:
 	yum -y install java-1.8.0-openjdk
 
 ~/deploy:
-	mdkir -p ~/deploy
+	mkdir -p ~/deploy
 
 ARTIFACTS_COMMIT ?= latest
 /tmp/artifacts.tgz:
