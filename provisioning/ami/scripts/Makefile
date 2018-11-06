@@ -21,7 +21,7 @@ ARTIFACTS_COMMIT ?= latest
 	aws s3 cp s3://sunrise2018-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
 
 app: ~/deploy /tmp/artifacts.tgz
-	tar xzvf /tmp/artifacts.tgz -C ~/deploy .
+	tar xzvf /tmp/artifacts.tgz -C ~/deploy
 	$(MAKE) -C ~/deploy/provisioning/instance
 
 clean:

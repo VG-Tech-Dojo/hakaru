@@ -2,7 +2,7 @@
   "description": "hakaru app",
 
   "variables": {
-    "ARTIFACTS_COMMIT": ""
+    "AWS_ACCOUNT_ID": "139990579284"
   },
 
   "builders": [
@@ -15,14 +15,14 @@
       "ami_name": "hakaru - {{isotime \"20060102150405\"}}",
       "ami_description": "hakaru application instance image",
       "ami_users": [
-        "{{user `AWS_ACCOUNT_ID_ACS`}}"
+        "{{user `AWS_ACCOUNT_ID`}}"
       ],
       "tags": {
-        "Name": "hakaru - {{isotime \"20060102150405\"}}",
+        "Timestamp": "{{timestamp}}",
         "SourceAMI": "{{ .SourceAMI }}",
         "SourceAMIName": "{{ .SourceAMIName }}"
       },
-      "source_ami": "ami-08847abae18baa040",
+      "source_ami": "ami-00f9d04b3b3092052",
 
       "subnet_id": "subnet-0ecb2e120ef986658",
       "security_group_id": "sg-0764c0aec74741fc7",
@@ -52,13 +52,10 @@
     },
     {
       "type": "shell",
-      "environment_vars": [
-        "ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
-      ],
       "inline": [
         "mkdir -p /var/tmp/scripts",
         "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
-        "sudo make -C /var/tmp/scripts"
+        "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
       ]
     }
   ],
