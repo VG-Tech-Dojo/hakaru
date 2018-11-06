@@ -2,4 +2,6 @@
 !.git*
 !.travis.yml
 
+hakaru
 vendor
+*.tgz

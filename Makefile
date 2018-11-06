@@ -1,4 +1,4 @@
-.PHONY: all clean test run fmt build provisioning/instance/etc/sazabi-ksk-keys.json
+.PHONY: all install dep-ensure dep-ensure-update imports fmt test run build
 
 GOOS=
 GOARCH=
@@ -35,3 +35,5 @@ run: main.go
 build: test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build
 
+artifacts.tgz: hakaru tools/
+	tar czf $@ $^
