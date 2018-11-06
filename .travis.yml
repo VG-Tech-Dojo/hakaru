@@ -16,6 +16,11 @@ env:
     - GOOS=linux
     - GOARCH=amd64
 
+cache:
+  directories:
+  - vendor
+  - $GOPATH/bin
+
 before_install:
   - export PATH=$PATH:$GOPATH/bin
 
@@ -26,16 +31,13 @@ script:
   - make test
   - make build
 
-cache:
-  directories:
-    - vendor
-    - $GOPATH/bin
+after_success:
+  - make artifacts.tgz
 
 addons:
   artifacts:
     paths:
-      - hakaru
-      - tools
+      - artifacts.tgz
     bucket: sunrise2018-hakaru-artifacts
     target_paths: latest:$TRAVIS_COMMIT
     s3_region: ap-northeast-1
