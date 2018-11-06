@@ -13,16 +13,16 @@ yum:
 	yum -y --enablerepo=mysql56-community install mysql-community-client
 	yum -y install java-1.8.0-openjdk
 
-~/deploy:
-	mkdir -p ~/deploy
+/root/deploy:
+	mkdir -p /root/deploy
 
 ARTIFACTS_COMMIT ?= latest
 /tmp/artifacts.tgz:
 	aws s3 cp s3://sunrise2018-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
 
 app: ~/deploy /tmp/artifacts.tgz
-	tar xzvf /tmp/artifacts.tgz -C ~/deploy
-	$(MAKE) -C ~/deploy/provisioning/instance
+	tar xzvf /tmp/artifacts.tgz -C /root/deploy
+	$(MAKE) -C /root/deploy/provisioning/instance
 
 clean:
 	rm -rf /var/lib/yum && sudo yum clean all
