@@ -70,6 +70,7 @@ func main() {
 
 	http.HandleFunc("/hakaru", hakaruHandler)
 	http.HandleFunc("/probe", probe)
+	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
 	// start server
 	if err := http.ListenAndServe(":8081", nil); err != nil {
