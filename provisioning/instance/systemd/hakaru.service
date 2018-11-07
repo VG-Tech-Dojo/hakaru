@@ -1,0 +1,19 @@
+[Unit]
+Description=hakaru server
+
+[Service]
+Type=simple
+
+# プロセスが不意に終了した場合の挙動
+# no: 死んだまま always: 自動起動
+Restart=no
+
+# 起動
+ExecStart=/opt/hakaru/bin/hakaru
+# 終了
+ExecStop=/bin/kill -HUP $MAINPID
+# 再起動
+ExecReload=/bin/kill -HUP $MAINPID && /opt/hakaru/bin/hakaru
+
+[Install]
+WantedBy=multi-user.target
