@@ -42,7 +42,7 @@ clean:
 
 # deployment
 
-artifacts.tgz: hakaru tools provisioning/instance
+artifacts.tgz: hakaru tools db provisioning/instance
 	tar czf $@ $^
 
 export AWS_PROFILE        ?= sunrise2018
@@ -51,4 +51,4 @@ export AWS_DEFAULT_REGION := ap-northeast-1
 # ci からアップロードできなくなった場合のターゲット
 upload: clean artifacts.tgz
 	aws s3 cp artifacts.tgz s3://sunrise2018-hakaru-artifacts/latest/artifacts.tgz
-	aws s3 cp artifacts.tgz s3://sunrise2018-hakaru-artifacts/$$(git rev-parse --short HEAD)/artifacts.tgz
+	aws s3 cp artifacts.tgz s3://sunrise2018-hakaru-artifacts/$$(git rev-parse HEAD)/artifacts.tgz

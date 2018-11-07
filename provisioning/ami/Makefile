@@ -11,7 +11,7 @@ scripts.tgz: scripts
 clean:
 	-rm -rf *.tgz
 
-ARTIFACTS_COMMIT ?= $(shell git rev-parse --short HEAD)
+ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
 
 check_artifacts:
 	@echo 'artifacts checking ...'
