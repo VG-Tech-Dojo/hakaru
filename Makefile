@@ -56,4 +56,4 @@ ARTIFACTS_BUCKET := $(YOUR_TEAMNAME)-hakaru-artifacts
 # ci からアップロードできなくなった場合のターゲット
 upload: clean artifacts.tgz
 	aws s3 cp artifacts.tgz s3://$(ARTIFACTS_BUCKET)/latest/artifacts.tgz
-	aws s3 cp artifacts.tgz s3://$(ARTIFACTS_BUCKET/$$(git rev-parse HEAD)/artifacts.tgz
+	aws s3 cp artifacts.tgz s3://$(ARTIFACTS_BUCKET)/$$(git rev-parse HEAD)/artifacts.tgz
