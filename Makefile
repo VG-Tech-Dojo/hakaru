@@ -1,3 +1,6 @@
+# FIXME: これを変えよう
+YOUR_TEAMNAME := sunrise2018
+
 .PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
 
 GOOS   ?=
@@ -47,8 +50,6 @@ artifacts.tgz: hakaru tools db provisioning/instance
 
 # FIXME: これを変えよう
 YOUR_TEAMNAME := flashers
-
-export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 ARTIFACTS_BUCKET := $(YOUR_TEAMNAME)-hakaru-artifacts
