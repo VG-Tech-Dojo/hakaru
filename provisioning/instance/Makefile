@@ -20,3 +20,4 @@ deploy: /etc/systemd/system/hakaru.service
 
 start:
 	systemctl start hakaru
+	curl -v 'http://localhost:8081/hakaru?name=test&value=1'
