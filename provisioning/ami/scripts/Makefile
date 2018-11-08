@@ -15,6 +15,7 @@ yum:
 	yum -y install https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 	yum -y --enablerepo=mysql56-community install mysql-community-client
 	yum -y install java-1.8.0-openjdk
+	yum -y install awslogs
 
 /root/deploy:
 	mkdir -p /root/deploy
