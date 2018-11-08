@@ -1,3 +1,6 @@
+# FIXME: これを変えよう
+YOUR_TEAMNAME := sunrise2018
+
 .PHONY: all cloud-config yum app clean
 
 all: cloud-config yum app clean
@@ -18,7 +21,7 @@ yum:
 
 ARTIFACTS_COMMIT ?= latest
 /tmp/artifacts.tgz:
-	aws s3 cp s3://sunrise2018-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
+	aws s3 cp s3://$(YOUR_TEAMNAME)-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
 
 app: ~/deploy /tmp/artifacts.tgz
 	tar xzvf /tmp/artifacts.tgz -C /root/deploy
