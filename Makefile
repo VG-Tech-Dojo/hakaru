@@ -1,3 +1,6 @@
+# FIXME: これを変えよう
+YOUR_TEAMNAME := sunrise2018
+
 .PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
 
 GOOS   ?=
@@ -44,9 +47,6 @@ clean:
 
 artifacts.tgz: hakaru tools db provisioning/instance
 	tar czf $@ $^
-
-# FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
