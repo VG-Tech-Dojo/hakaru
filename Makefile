@@ -1,5 +1,5 @@
 # FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+YOUR_TEAMNAME := flashers
 
 .PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
 
