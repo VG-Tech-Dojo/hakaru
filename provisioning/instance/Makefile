@@ -1,4 +1,4 @@
-all: clean deploy
+all: clean awslogs deploy
 
 clean:
 	@echo 'do nothing'
