@@ -4,7 +4,7 @@ clean:
 	@echo 'do nothing'
 
 deploy: /etc/systemd/system/hakaru.service
-	$(MAKE) start
+	$(MAKE) healthy
 
 /opt/hakaru/bin:
 	mkdir -p /opt/hakaru/bin
@@ -18,6 +18,6 @@ deploy: /etc/systemd/system/hakaru.service
 	systemctl list-unit-files --type=service | grep hakaru
 	systemctl enable hakaru
 
-start:
+healthy:
 	systemctl start hakaru
 	curl -v 'http://localhost:8081/hakaru?name=test&value=1'
