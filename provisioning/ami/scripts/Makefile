@@ -1,5 +1,5 @@
 # FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+YOUR_TEAMNAME := flashers
 
 .PHONY: all cloud-config yum app clean
 
