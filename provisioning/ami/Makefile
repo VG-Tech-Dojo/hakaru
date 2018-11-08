@@ -1,5 +1,5 @@
 # FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+YOUR_TEAMNAME := flashers
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
