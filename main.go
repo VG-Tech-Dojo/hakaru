@@ -7,11 +7,15 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
-	"fmt"
+	"os"
 )
 
 func main() {
-	dataSourceName := "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
+	if dataSourceName == "" {
+		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+	}
+
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
 		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
@@ -42,34 +46,7 @@ func main() {
 		w.Header().Set("Access-Control-Allow-Methods", "GET")
 	}
 
-	probe := func(w http.ResponseWriter, r *http.Request) {
-		fmt.Println("on probe:")
-
-		db, err := sql.Open("mysql", dataSourceName)
-		if err != nil {
-			panic(err.Error())
-		}
-		defer db.Close()
-
-		rows, e := db.Query("SELECT name, value FROM eventlog")
-		if e != nil {
-			panic(e.Error())
-		}
-
-		for rows.Next() {
-			var name string
-			var value int
-
-			if err := rows.Scan(&name, &value); err != nil {
-				log.Fatal(err)
-			}
-			fmt.Println(name, value)
-		}
-	}
-
-
 	http.HandleFunc("/hakaru", hakaruHandler)
-	http.HandleFunc("/probe", probe)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
 	// start server
