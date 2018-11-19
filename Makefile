@@ -1,5 +1,4 @@
-# FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+TEAMNAME := $(shell head -n1 team_name.txt)
 
 .PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
 
@@ -35,23 +34,22 @@ test:
 run: main.go
 	go run main.go
 
-build: hakaru
-
-hakaru: test
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o $@
+build: test
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o hakaru
 
 clean:
 	rm -rf hakaru
 
 # deployment
 
-artifacts.tgz: hakaru tools db provisioning/instance
-	tar czf $@ $^
+artifacts.tgz: tools db team_name.txt provisioning/instance
+	$(MAKE) build GOOS=linux GOARCH=amd64
+	tar czf artifacts.tgz hakaru tools db team_name.txt provisioning/instance
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
 
-ARTIFACTS_BUCKET := $(YOUR_TEAMNAME)-hakaru-artifacts
+ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
 
 # ci からアップロードできなくなった場合のターゲット
 upload: clean artifacts.tgz

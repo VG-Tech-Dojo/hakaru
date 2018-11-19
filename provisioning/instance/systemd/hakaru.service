@@ -15,5 +15,8 @@ ExecStop=/bin/kill -HUP $MAINPID
 # 再起動
 ExecReload=/bin/kill -HUP $MAINPID && /opt/hakaru/bin/hakaru
 
+# 環境変数
+EnvironmentFile=/etc/sysconfig/hakaru
+
 [Install]
 WantedBy=multi-user.target
