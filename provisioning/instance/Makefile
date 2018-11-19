@@ -1,4 +1,4 @@
-all: clean awslogs deploy
+all: clean amazon-cloudwatch-agent deploy
 
 clean:
 	@echo 'do nothing'
@@ -18,18 +18,24 @@ deploy: /etc/systemd/system/hakaru.service
 	systemctl list-unit-files --type=service | grep hakaru
 	systemctl enable hakaru
 
-/etc/awslogs/awscli.conf: awslogs/awscli.conf
-	cp awslogs/awscli.conf /etc/awslogs/awscli.conf
+/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml: /opt/aws/amazon-cloudwatch-agent/bin/config.json
+	/opt/aws/amazon-cloudwatch-agent/bin/config-translator \
+	    --mode ec2 \
+	    --os linux \
+	    --input /opt/aws/amazon-cloudwatch-agent/bin/config.json \
+	    --output /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml \
+	    --config /opt/aws/amazon-cloudwatch-agent/etc/common-config.toml
+	/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent \
+	    -schematest \
+	    -config /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
 
-/etc/awslogs/awslogs.conf: awslogs/awslogs.conf
-	cp wslogs/awslogs.conf /etc/awslogs/awslogs.conf
+# https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html
+/opt/aws/amazon-cloudwatch-agent/bin/config.json: amazon-cloudwatch-agent/bin/config.json
+	cp amazon-cloudwatch-agent/bin/config.json /opt/aws/amazon-cloudwatch-agent/bin/config.json
 
-/var/awslogs/state:
-	mkdir -p /var/awslogs/state:
-
-awslogs: /etc/awslogs/awscli.conf /etc/awslogs/awslogs.conf /var/awslogs/state
-	systemctl start awslogsd
-	systemctl enable awslogsd
+amazon-cloudwatch-agent: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
+	systemctl restart amazon-cloudwatch-agent
+	systemctl enable amazon-cloudwatch-agent
 
 start:
 	systemctl start hakaru
