@@ -9,8 +9,8 @@ Sunrise2018: 素朴な計測サーバ
 
 - [ ] voyagegroup/sunrise2018 での `make apply` が完了している
 - [ ] ./team_name.txt の1行目をチーム名に変更している
-- [ ] ./provisioning/ami/packer.json を voyagegroup/sunrise2018 の hakaru/README.md の通りに変更している
-- [ ] ./provisioning/instance/sysconfig/hakaru を voyagegroup/sunrise2018 の hakaru/README.md の通りに変更している
+- [ ] ./provisioning/ami/packer.json を voyagegroup/sunrise2018 hakaru/README.md の通りに変更している
+- [ ] ./provisioning/instance/sysconfig/hakaru を voyagegroup/sunrise2018 hakaru/README.md の通りに変更している
 
 ## build AMI
 
@@ -26,6 +26,8 @@ voyagegroup/sunrise2018 hakaru/README.md を参考にしてください
 ## deployment
 
 1. ビルドを実施し、成果物をアップロードする
+
+__ビルド/アップロードを自動化する場合は .travis.yml を参考に__
 
 ```bash
 $ make install
