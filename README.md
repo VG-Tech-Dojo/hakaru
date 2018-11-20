@@ -27,7 +27,7 @@ voyagegroup/sunrise2018 hakaru/README.md を参考にしてください
 
 1. ビルドを実施し、成果物をアップロードする
 
-__ビルド/アップロードを自動化する場合は .travis.yml を参考に__
+*ビルド/アップロードを自動化する場合は .travis.yml を参考に*
 
 ```bash
 $ make install
