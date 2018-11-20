@@ -18,7 +18,7 @@ clean:
 	chmod +x /opt/hakaru/bin/hakaru
 
 /etc/sysconfig/hakaru: sysconfig/hakaru
-	cp sysconfig/hakaru etc/sysconfig/hakaru
+	cp sysconfig/hakaru /etc/sysconfig/hakaru
 
 /etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service
