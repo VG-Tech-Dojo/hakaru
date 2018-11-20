@@ -8,7 +8,7 @@
 all: clean amazon-cloudwatch-agent deploy
 
 clean:
-  rm -f /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
+	rm -f /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
 
 deploy: /etc/systemd/system/hakaru.service
 	$(MAKE) hakaru
@@ -27,10 +27,10 @@ deploy: /etc/systemd/system/hakaru.service
 /etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service
 	systemctl list-unit-files --type=service | grep hakaru
-	systemctl enable hakaru
 
 hakaru:
 	systemctl start hakaru
+	systemctl enable hakaru
 
 healthcheck:
 	curl -v 'http://127.0.0.1:8081/hakaru?name=deploy&value=1'
