@@ -22,7 +22,7 @@ yum:
 	mkdir -p /root/hakaru
 
 /root/hakaru/team_name.txt: deploy/team_name.txt /root/hakaru
-	cp team_name.txt /root/hakaru/team_name.txt
+	cp deploy/team_name.txt /root/hakaru/team_name.txt
 
 /root/hakaru/Makefile: deploy/Makefile /root/hakaru/team_name.txt /root/hakaru
 	cp deploy/Makefile /root/hakaru/Makefile
