@@ -34,6 +34,7 @@ after_success:
   - make artifacts.tgz
 
 addons:
+  # https://suzuken.hatenablog.jp/entry/2015/12/18/150555
   artifacts:
     paths:
       - artifacts.tgz
