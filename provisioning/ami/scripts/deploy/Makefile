@@ -9,12 +9,16 @@ TEAMNAME := $(shell head -n1 team_name.txt)
 
 ARTIFACTS_COMMIT ?= latest
 
-all: /tmp/artifacts.tgz /root/hakaru/app
-	tar xzvf /tmp/artifacts.tgz -C /root/hakaru/app
+
+all: clean /root/hakaru/app
 	$(MAKE) -C /root/hakaru/app/provisioning/instance
+
+clean:
+	rm -rf /tmp/artifacts.tgz /root/hakaru/app
 
 /tmp/artifacts.tgz:
 	aws s3 cp s3://$(TEAMNAME)-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
 
-/root/hakaru/app:
+/root/hakaru/app: /tmp/artifacts.tgz
 	mkdir -p /root/hakaru/app
+	tar xzvf /tmp/artifacts.tgz -C /root/hakaru/app
