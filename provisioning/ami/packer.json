@@ -60,6 +60,24 @@
         "rm -rf /var/tmp/scripts.tgz",
         "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
       ]
+    },
+
+    {
+      "type": "shell",
+      "inline": [
+        "sudo make -C /root/hakaru ARTIFACTS_COMMIT=latest"
+      ]
+    },
+
+    {
+      "type": "shell",
+      "inline": [
+        "sudo rm -rf /var/lib/yum && sudo yum clean all",
+        "sudo rm -rf /tmp/files /home/ec2-user/files",
+        "sudo rm -f /home/ec2-user/etc /home/ec2-user/.ssh/authorized_keys",
+        "sudo rm -f /etc/ssh/*_key /etc/ssh/*_key.pub",
+        "sudo rm -f /etc/udev/rules.d/70-persistent-net.rules"
+      ]
     }
   ],
 

@@ -1,9 +1,10 @@
-# FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+# provisioning (run only in building ami)
+#
+# パッケージのインストール等はここでやる
+#
+.PHONY: all cloud-config yum app
 
-.PHONY: all cloud-config yum app clean
-
-all: cloud-config yum app clean
+all: cloud-config yum app
 
 cloud-config: cloud.cfg.d/99_defaults.cfg
 	cp cloud.cfg.d/99_defaults.cfg /etc/cloud/cloud.cfg.d/
@@ -17,20 +18,13 @@ yum:
 	yum -y install java-1.8.0-openjdk
 	yum -y install https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
 
-/root/deploy:
-	mkdir -p /root/deploy
+/root/hakaru:
+	mkdir -p /root/hakaru
 
-ARTIFACTS_COMMIT ?= latest
-/tmp/artifacts.tgz:
-	aws s3 cp s3://$(YOUR_TEAMNAME)-hakaru-artifacts/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
+/root/hakaru/team_name.txt: deploy/team_name.txt /root/hakaru
+	cp team_name.txt /root/hakaru/team_name.txt
 
-app: ~/deploy /tmp/artifacts.tgz
-	tar xzvf /tmp/artifacts.tgz -C /root/deploy
-	$(MAKE) -C /root/deploy/provisioning/instance
+/root/hakaru/Makefile: deploy/Makefile /root/hakaru/team_name.txt /root/hakaru
+	cp deploy/Makefile /root/hakaru/Makefile
 
-clean:
-	rm -rf /var/lib/yum && sudo yum clean all
-	rm -rf /tmp/files /home/ec2-user/files
-	rm -f /home/ec2-user/etc /home/ec2-user/.ssh/authorized_keys
-	rm -f /etc/ssh/*_key /etc/ssh/*_key.pub
-	rm -f /etc/udev/rules.d/70-persistent-net.rules
+app: /root/hakaru/Makefile

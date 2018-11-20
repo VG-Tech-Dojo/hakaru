@@ -1,11 +1,14 @@
-# FIXME: これを変えよう
-YOUR_TEAMNAME := sunrise2018
+# packer wrapper
+#
+
+TEAMNAME := $(shell head -n1 ../../team_name.txt)
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
 
-ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
-ARTIFACTS_BUCKET := $(YOUR_TEAMNAME)-hakaru-artifacts
+#ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
+ARTIFACTS_COMMIT := latest
+ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
 
 # https://hub.docker.com/r/hashicorp/packer/tags/
 PACKER_VERSION := 1.3.2
@@ -14,20 +17,21 @@ PACKER_VERSION := 1.3.2
 
 all: clean build
 
-scripts.tgz: scripts
-	tar cvzf $@ -C $< .
+scripts/deploy/team_name.txt: ../../team_name.txt
+	cp ../../team_name.txt scripts/deploy/team_name.txt
+
+scripts.tgz: scripts scripts/deploy/team_name.txt
+	tar cvzf scripts.tgz -C scripts .
 
 clean:
-	-rm -rf *.tgz
+	-rm -rf *.tgz scripts/deploy/team_name.txt
 
 check_artifacts:
 	@echo 'artifacts checking ...'
-	@echo 'latest:'
-	aws s3 ls s3://$(ARTIFACTS_BUCKET)/latest/artifacts.tgz
-	@echo "using:"
+	@echo "use:"
 	aws s3 ls s3://$(ARTIFACTS_BUCKET)/$(ARTIFACTS_COMMIT)/artifacts.tgz
 
-build: packer.json scripts.tgz check_artifacts
+build: scripts.tgz check_artifacts
 	docker run --rm -it \
 		-v ~/.aws:/root/.aws \
 		-e TZ=Asia/Tokyo \
@@ -35,7 +39,7 @@ build: packer.json scripts.tgz check_artifacts
 		-e AWS_DEFAULT_REGION=$(AWS_DEFAULT_REGION) \
 		-v $(CURDIR):/work \
 		-w /work \
-		hashicorp/packer:$(PACKER_VERSION) inspect $<
+		hashicorp/packer:$(PACKER_VERSION) inspect packer.json
 	docker run --rm -it \
 		-v ~/.aws:/root/.aws \
 		-e TZ=Asia/Tokyo \
@@ -43,4 +47,4 @@ build: packer.json scripts.tgz check_artifacts
 		-e AWS_DEFAULT_REGION=$(AWS_DEFAULT_REGION) \
 		-v $(CURDIR):/work \
 		-w /work \
-		hashicorp/packer:$(PACKER_VERSION) build --only=amazon-ebs -var ARTIFACTS_COMMIT=$(ARTIFACTS_COMMIT) $<
+		hashicorp/packer:$(PACKER_VERSION) build --only=amazon-ebs -var ARTIFACTS_COMMIT=$(ARTIFACTS_COMMIT) packer.json
