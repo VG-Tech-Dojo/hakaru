@@ -3,16 +3,12 @@
 # /root/hakaru/app/provisioning/instance/Makefile on ec2 instance
 #
 
-.PHONY: all clean deploy amazon-cloudwatch-agent hakaru healthcheck
+.PHONY: all clean hakaru amazon-cloudwatch-agent healthcheck
 
-all: clean amazon-cloudwatch-agent deploy
+all: clean amazon-cloudwatch-agent hakaru healthcheck
 
 clean:
 	rm -f /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
-
-deploy: /etc/systemd/system/hakaru.service
-	$(MAKE) hakaru
-	$(MAKE) healtcheck
 
 /opt/hakaru/bin:
 	mkdir -p /opt/hakaru/bin
@@ -28,7 +24,7 @@ deploy: /etc/systemd/system/hakaru.service
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service
 	systemctl list-unit-files --type=service | grep hakaru
 
-hakaru:
+hakaru: /etc/systemd/system/hakaru.service
 	systemctl start hakaru
 	systemctl enable hakaru
 
