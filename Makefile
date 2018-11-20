@@ -38,7 +38,7 @@ build: test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o hakaru
 
 clean:
-	rm -rf hakaru
+	rm -rf hakaru *.tgz
 
 # deployment
 

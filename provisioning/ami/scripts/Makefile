@@ -16,6 +16,7 @@ yum:
 	yum -y install https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
 	yum -y --enablerepo=mysql56-community install mysql-community-client
 	yum -y install java-1.8.0-openjdk
+	yum -y install https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
 
 /root/hakaru:
 	mkdir -p /root/hakaru
