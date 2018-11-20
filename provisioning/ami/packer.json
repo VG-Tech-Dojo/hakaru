@@ -3,8 +3,8 @@
 
   "variables": {
     "AWS_ACCOUNT_ID": "139990579284",
-    "subnet_id": "subnet-0ecb2e120ef986658",
-    "security_group_id": "sg-0764c0aec74741fc7"
+    "subnet_id": "subnet-07f0657a9db896e1a",
+    "security_group_id": "sg-0d880f207a5d393d4"
   },
 
   "builders": [
