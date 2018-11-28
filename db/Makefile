@@ -1,5 +1,3 @@
-CONFIG_FILE=$(PWD)/conf/default.conf
-SQL_DIR=$(PWD)/sql
 
 SERVER=localhost
 PORT=13306
@@ -14,16 +12,24 @@ all:
 setup:
 	$(MAKE) mysql/setup mysql/run
 	sleep 20 # for mysql service
-	$(MAKE) init migrate info
+	$(MAKE) flyway/init flyway/migrate flyway/info
 
-init info migrate validate:
-	$(MAKE) __flyway FLYWAY_CMD=$@
+# openjdkだとsslのあれがあれで、とりあえずmaven imageだと無視する感じになってるのでとりあえずとりあえず
+JAVA_IMAGE=maven
+flyway/setup:
+	docker pull $(JAVA_IMAGE)
 
-__flyway:
-	../tools/flyway/flyway.sh $(FLYWAY_OPTS) -configFile=$(CONFIG_FILE) -url=$(URL) -locations=filesystem:$(SQL_DIR) $(FLYWAY_CMD)
+CONFIG_FILE=/app/conf/default.conf
+SQL_DIR=/app/sql
+flyway/init flyway/info flyway/migrate:
+	docker run --rm -it \
+	  --net="host" \
+	  -e JAVA_OPTS='-Djavax.net.ssl.trustStore' \
+	  -v $(CURDIR):/app \
+	  -w /app \
+	  $(JAVA_IMAGE) flyway/flyway.sh -configFile=$(CONFIG_FILE) -url=$(URL) -locations=filesystem:$(SQL_DIR) $(@F)
 
 ## mysql on docker
-
 mysql/setup:
 	docker pull mysql:$(MYSQL_VERSION)
 
