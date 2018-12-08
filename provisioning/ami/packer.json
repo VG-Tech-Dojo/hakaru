@@ -2,9 +2,9 @@
   "description": "hakaru app",
 
   "variables": {
-    "AWS_ACCOUNT_ID": "139990579284",
-    "subnet_id": "subnet-07f0657a9db896e1a",
-    "security_group_id": "sg-0d880f207a5d393d4"
+    "AWS_ACCOUNT_ID": "230762559994",
+    "subnet_id": "subnet-0090a3b234427b204",
+    "security_group_id": "sg-01d18a6649675f4c1"
   },
 
   "builders": [
