@@ -1,6 +1,7 @@
 .*
 !.git*
 !.travis.yml
+!.gitkeep
 
 hakaru
 vendor
