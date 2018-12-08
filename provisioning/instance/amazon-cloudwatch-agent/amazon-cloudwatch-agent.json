@@ -40,13 +40,13 @@
           {
             "file_path": "/var/log/messages",
             "log_group_name": "/hakaru/messages",
-            "timestamp_format": "%b %d %H:%M:%S",
+            "timestamp_format": "%b %-d %H:%M:%S",
             "timezone": "Local"
           },
           {
             "file_path": "/var/log/secure",
             "log_group_name": "/hakaru/secure",
-            "timestamp_format": "%b %d %H:%M:%S",
+            "timestamp_format": "%b %-d %H:%M:%S",
             "timezone": "Local"
           }
         ]
