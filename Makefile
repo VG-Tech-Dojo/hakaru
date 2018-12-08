@@ -42,9 +42,9 @@ clean:
 
 # deployment
 
-artifacts.tgz: tools db team_name.txt provisioning/instance
+artifacts.tgz: db team_name.txt provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
-	tar czf artifacts.tgz hakaru tools db team_name.txt provisioning/instance
+	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1
