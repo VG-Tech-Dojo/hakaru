@@ -1,13 +1,14 @@
 package main
 
 import (
-	"net/http"
 	"log"
+	"net/http"
 
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -16,20 +17,20 @@ func main() {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	}
 
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer db.Close()
+
+	stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
+	if e != nil {
+		panic(e.Error())
+	}
+
+	defer stmt.Close()
+
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		db, err := sql.Open("mysql", dataSourceName)
-		if err != nil {
-			panic(err.Error())
-		}
-		defer db.Close()
-
-		stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-		if e != nil {
-			panic(e.Error())
-		}
-
-		defer stmt.Close()
-
 		name := r.URL.Query().Get("name")
 		value := r.URL.Query().Get("value")
 
