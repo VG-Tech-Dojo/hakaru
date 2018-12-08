@@ -1,0 +1,13 @@
+version: '3.1'
+
+services:
+  db_test:
+    image: mysql:5.6
+    container_name: hakaru-mysql-test
+    restart: always
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_DATABASE: hakaru-db-test
+      MYSQL_ROOT_PASSWORD: hakaru-pass
+    ports:
+      - 13307:3306
