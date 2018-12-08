@@ -6,30 +6,34 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"sync"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-const INSERT_COUNT = 100
+const INSERT_TIME = 10
 
 type EventLog struct {
 	Name  string
 	Value string
+	Now   string
 }
 
 func NewEventLog(name, value string) EventLog {
+	// TODO mysqlのNOW()が何を作っているの確認
+	// https://stackoverflow.com/questions/23415612/insert-datetime-using-now-with-go
 	return EventLog{
 		Name:  name,
 		Value: value,
+		Now:   time.Now().Format(time.RFC3339),
 	}
 }
 
-func RunDB(db *sql.DB, eventlogStack *list.List) {
+func RunDB(db *sql.DB, eventlogStack *list.List, queCount int) {
 	query := "INSERT INTO eventlog(at, name, value) values"
-	for i := 0; i < INSERT_COUNT; i++ {
+	for i := 0; i < queCount; i++ {
 		query += "(NOW(), ?, ?)"
-		if i != INSERT_COUNT {
+		if i != queCount {
 			query += ","
 		}
 	}
@@ -40,7 +44,7 @@ func RunDB(db *sql.DB, eventlogStack *list.List) {
 	defer stmt.Close()
 
 	v := []string{}
-	for i := 0; i < INSERT_COUNT; i++ {
+	for i := 0; i < queCount; i++ {
 		event := eventlogStack.Remove(eventlogStack.Front())
 		eventLog := event.(EventLog)
 		name := eventLog.Name
@@ -64,30 +68,39 @@ func main() {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	}
 
-	eventlogsStack := list.New()
-	_ = eventlogsStack
-
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
 	defer db.Close()
 
-	var mux sync.Mutex
-	requestCount := 0
-	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		go func() {
-			name := r.URL.Query().Get("name")
-			value := r.URL.Query().Get("value")
-
-			eventlogsStack.PushFront(NewEventLog(name, value))
-			mux.Lock()
-			defer mux.Unlock()
-			requestCount += 1
-			if requestCount%INSERT_COUNT == 0 {
-				RunDB(db, eventlogsStack)
+	// insertの通知をするためのgoroutine
+	requestCh := make(chan *http.Request)
+	// バルクインサート周りを管理するgoroutine
+	go func(requestCh chan *http.Request) {
+		timeNotification := time.NewTicker(INSERT_TIME * time.Second)
+		queCount := 0
+		eventlogStack := list.New()
+		for {
+			select {
+			case r := <-requestCh:
+				name := r.URL.Query().Get("name")
+				value := r.URL.Query().Get("value")
+				eventlogStack.PushBack(NewEventLog(name, value))
+				queCount += 1
+			case <-timeNotification.C:
+				if queCount != 0 {
+					RunDB(db, eventlogStack, queCount)
+					eventlogStack = list.New()
+					queCount = 0
+				}
 			}
-		}()
+		}
+		timeNotification.Stop()
+	}(requestCh)
+
+	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
+		requestCh <- r
 
 		origin := r.Header.Get("Origin")
 		if origin != "" {
