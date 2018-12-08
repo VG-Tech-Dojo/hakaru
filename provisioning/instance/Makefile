@@ -8,9 +8,9 @@
 all: clean amazon-cloudwatch-agent hakaru healthcheck
 
 clean:
-	systemctl stop hakaru
-	systemctl stop amazon-cloudwatch-agent
-	rm -f /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
+	-systemctl stop hakaru
+	-systemctl stop amazon-cloudwatch-agent
+	-rm -f /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.toml
 
 /opt/hakaru/bin:
 	mkdir -p /opt/hakaru/bin
