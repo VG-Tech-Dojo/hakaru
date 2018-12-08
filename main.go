@@ -1,8 +1,8 @@
 package main
 
 import (
-	"net/http"
 	"log"
+	"net/http"
 
 	"database/sql"
 
@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
