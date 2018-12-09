@@ -35,7 +35,7 @@ run: main.go
 	go run main.go
 
 build: test
-	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o hakaru
+	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -ldflags "-X main.version=$(shell git rev-parse HEAD)" -o hakaru
 
 clean:
 	rm -rf hakaru *.tgz

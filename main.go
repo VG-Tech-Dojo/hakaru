@@ -26,7 +26,7 @@ var (
 )
 
 func inserter() {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(10 * time.Second)
 	valueQue := make([]Value, 0, 1000)
 	for {
 		select {
@@ -35,20 +35,13 @@ func inserter() {
 				continue
 			}
 			query := "INSERT INTO eventlog(at, name, value) values(?, ?, ?)" + strings.Repeat(", (?, ?, ?)", len(valueQue)-1)
-			stmt, e := db.Prepare(query)
-			if e != nil {
-				panic(e.Error())
-			}
-
-			defer stmt.Close()
-
 			args := make([]interface{}, 3*len(valueQue))
 			for i, que := range valueQue {
-				args[i] = que.Now
-				args[i+1] = que.Name
-				args[i+2] = que.Value
+				args[3*i] = que.Now
+				args[3*i+1] = que.Name
+				args[3*i+2] = que.Value
 			}
-			_, err := stmt.Exec(args...)
+			_, err := db.Exec(query, args...)
 			if err != nil {
 				fmt.Println(err)
 			}
@@ -77,7 +70,10 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 	ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET")
 }
 
+var version = "unknown"
+
 func main() {
+	fmt.Println(version + " start.\n" + time.Now().Format(time.RFC850))
 	go inserter()
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
