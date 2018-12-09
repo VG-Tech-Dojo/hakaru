@@ -21,6 +21,9 @@ func main() {
 	}
 	defer db.Close()
 
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
+
 	hakaru := HakaruHandler{DB: db}
 
 	http.Handle("/hakaru", hakaru)
