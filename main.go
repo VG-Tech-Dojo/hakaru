@@ -145,7 +145,7 @@ func sendMessage(msg string) {
 		"Dairanto",
 		"",
 		"",
-		"#team_dairanto"})
+		"#dairanto_deploy"})
 	_, err := http.PostForm(incomingUrl, url.Values{"payload": {string(params)}})
 
 	if err != nil {
