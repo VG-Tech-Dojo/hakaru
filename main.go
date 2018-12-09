@@ -125,7 +125,7 @@ func beforeStart() {
 	instId := "local"
 	// instance idをとる
 	// localではむりかも?
-	resp, err := http.Get("169.254.169.254/latest/meta-data/instance-id/")
+	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id/")
 	if err != nil {
 		sendMessage("Instance " + instId + " start... Ver: " + version)
 		return
