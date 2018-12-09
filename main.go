@@ -3,6 +3,7 @@ package main
 import (
 	"container/list"
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -41,7 +42,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 	}
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		panic(err.Error())
+		fmt.Printf("Error in RunDB Prepared statement: %v", err)
 	}
 	defer stmt.Close()
 
@@ -56,14 +57,13 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 	log.Println("Bulk insert args Num", len(s), "event num", eventlogStack.Len())
 	_, err = stmt.Exec(s...)
 	if err != nil {
-		panic(err)
+		fmt.Printf("Error in RunDB statement execution: %v", err)
 	}
 }
 
 func main() {
 	//プロファイリング
 	//defer profile.Start(profile.ProfilePath(".")).Stop()
-
 
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
@@ -72,13 +72,12 @@ func main() {
 
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
-		panic(err.Error())
+		fmt.Printf("Error in db connection creation: %v", err)
 	}
 
 	defer db.Close()
-	db.SetMaxIdleConns(225)
+	db.SetMaxIdleConns(50)
 	db.SetMaxOpenConns(1000)
-
 
 	// insertの通知をするためのgoroutine
 	requestCh := make(chan *http.Request)
