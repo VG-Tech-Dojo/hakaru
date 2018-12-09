@@ -26,7 +26,7 @@ var (
 )
 
 func inserter() {
-	ticker := time.NewTicker(10 * time.Second)
+	ticker := time.NewTicker(1 * time.Second)
 	valueQue := make([]Value, 0, 1000)
 	for {
 		select {
