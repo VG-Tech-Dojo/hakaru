@@ -12,16 +12,12 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var db *sql.DB
+var (
+	db *sql.DB,
+	stmt *sql.Stmt
+)
 
 func hakaruHandler(w http.ResponseWriter, r *http.Request) {
-	stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-	if e != nil {
-		panic(e.Error())
-	}
-
-	defer stmt.Close()
-
 	name := r.URL.Query().Get("name")
 	value := r.URL.Query().Get("value")
 
@@ -53,8 +49,14 @@ func main() {
 		panic(err.Error())
 	}
 	defer db_.Close()
-
 	db = db_
+
+	stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
+	if e != nil {
+		panic(e.Error())
+	}
+
+	defer stmt.Close()
 
 	http.HandleFunc("/hakaru", hakaruHandler)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })

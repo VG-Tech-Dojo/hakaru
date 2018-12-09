@@ -29,6 +29,9 @@
   name = "github.com/go-sql-driver/mysql"
   version = "1.4.0"
 
+[[constraint]]
+  name = "github.com/pkg/profile"
+
 [prune]
   go-tests = true
   unused-packages = true
