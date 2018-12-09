@@ -1,8 +1,11 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
+	"net/url"
 	"strings"
 	"time"
 
@@ -55,7 +58,7 @@ func inserter() {
 	}
 }
 func hakaruHandler(ctx *fasthttp.RequestCtx) {
-	now := time.Now()
+	now := time.Now().In(time.FixedZone("Asia/Tokyo", 9*60*60))
 	name := string(ctx.QueryArgs().Peek("name"))
 	value := string(ctx.URI().QueryArgs().Peek("value"))
 
@@ -73,6 +76,7 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 var version = "unknown"
 
 func main() {
+	sendMessage("Instance " + os.Getenv("HOSTNAME") + " start... Ver: " + version)
 	fmt.Println(version + " start.\n" + time.Now().Format(time.RFC850))
 	go inserter()
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
@@ -105,5 +109,29 @@ func main() {
 	// start server
 	if err := fasthttp.ListenAndServe(":8081", router); err != nil {
 		log.Fatal(err)
+	}
+}
+
+type Slack struct {
+	Text       string `json:"text"`
+	Username   string `json:"username"`
+	Icon_emoji string `json:"icon_emoji"`
+	Icon_url   string `json:"icon_url"`
+	Channel    string `json:"channel"`
+}
+
+func sendMessage(msg string) {
+	incomingUrl := "https://hooks.slack.com/services/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"
+	params, _ := json.Marshal(Slack{
+		msg,
+		"Dairanto",
+		"",
+		"",
+		"#team_dairanto"})
+	_, err := http.PostForm(incomingUrl, url.Values{"payload": {string(params)}})
+
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 }
