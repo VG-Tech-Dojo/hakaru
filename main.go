@@ -13,9 +13,7 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-
 const INSERT_TIME = 10
-
 
 type EventLog struct {
 	Name  string
@@ -115,7 +113,6 @@ func main() {
 	hakaru := HakaruHandler{
 		DB:        db,
 		requestCH: requestCh,
-
 	}
 
 	http.Handle("/hakaru", hakaru)
