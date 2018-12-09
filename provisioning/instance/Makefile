@@ -30,6 +30,7 @@ clean:
 hakaru: /etc/systemd/system/hakaru.service
 	systemctl start hakaru
 	systemctl enable hakaru
+	sleep 5
 
 healthcheck:
 	curl -v 'http://127.0.0.1:8081/hakaru?name=deploy&value=1'

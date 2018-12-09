@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"log"
 	"net/http"
+
 	"os"
 	"sync"
 	"time"
@@ -13,7 +14,9 @@ import (
 	"github.com/pkg/profile"
 )
 
+
 const INSERT_TIME = 10
+
 
 type EventLog struct {
 	Name  string
@@ -64,6 +67,7 @@ func main() {
 	//プロファイリング
 	defer profile.Start(profile.ProfilePath(".")).Stop()
 
+
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
@@ -73,6 +77,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
+
 	defer db.Close()
 
 	// insertの通知をするためのgoroutine
@@ -108,9 +113,12 @@ func main() {
 	hakaru := HakaruHandler{
 		DB:        db,
 		requestCH: requestCh,
+
 	}
+	stmt = stmt_
 
 	http.Handle("/hakaru", hakaru)
+
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
 	// start server
