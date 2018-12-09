@@ -1,5 +1,6 @@
 import requests
 import random
+from joblib import Parallel, delayed
 
 
 url = 'http://localhost:8081/hakaru'
@@ -12,5 +13,4 @@ def sendRequest():
     return response
 
 if __name__ == "__main__":
-    for n in range(0, 10):
-        sendRequest()
+    Parallel(n_jobs=10)([delayed(sendRequest)() for i in range(100000)])
