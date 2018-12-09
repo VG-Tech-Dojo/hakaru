@@ -6,6 +6,7 @@ import (
 
 	"database/sql"
 
+	"github.com/pkg/profile"
 	"os"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -38,6 +39,9 @@ func hakaruHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+
+	//プロファイリング
+	defer profile.Start(profile.ProfilePath(".")).Stop()
 
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
