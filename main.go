@@ -11,7 +11,6 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/profile"
 )
 
 
@@ -65,7 +64,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 
 func main() {
 	//プロファイリング
-	defer profile.Start(profile.ProfilePath(".")).Stop()
+	//defer profile.Start(profile.ProfilePath(".")).Stop()
 
 
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
@@ -79,6 +78,9 @@ func main() {
 	}
 
 	defer db.Close()
+	db.SetMaxIdleConns(225)
+	db.SetMaxOpenConns(1000)
+
 
 	// insertの通知をするためのgoroutine
 	requestCh := make(chan *http.Request)
@@ -115,7 +117,6 @@ func main() {
 		requestCH: requestCh,
 
 	}
-	stmt = stmt_
 
 	http.Handle("/hakaru", hakaru)
 
