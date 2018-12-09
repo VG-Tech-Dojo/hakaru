@@ -25,7 +25,7 @@ clean:
 /etc/security/limits.conf: security/limits.conf
 	cp security/limits.conf /etc/security/limits.conf
 
-/etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru
+/etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru /etc/security/limits.conf
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service
 	systemctl daemon-reload
 	systemctl list-unit-files --type=service | grep hakaru
