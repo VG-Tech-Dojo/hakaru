@@ -58,8 +58,7 @@ func inserter() {
 	}
 }
 func hakaruHandler(ctx *fasthttp.RequestCtx) {
-	// now := time.Now().In(time.FixedZone("Asia/Tokyo", 9*60*60))
-	now := time.Now().UTC()
+	now := time.Now()
 	name := string(ctx.QueryArgs().Peek("name"))
 	value := string(ctx.URI().QueryArgs().Peek("value"))
 
@@ -77,7 +76,6 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 var version = "unknown"
 
 func main() {
-	fmt.Println(os.Environ())
 	sendMessage("Instance " + os.Getenv("HOSTNAME") + " start... Ver: " + version)
 	fmt.Println(version + " start.\n" + time.Now().Format(time.RFC850))
 	go inserter()
