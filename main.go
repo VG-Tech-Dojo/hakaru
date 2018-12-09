@@ -94,8 +94,8 @@ func main() {
 
 	db = _db
 
-	db.SetMaxIdleConns(20)
-	db.SetMaxOpenConns(20)
+	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(5)
 	router := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/ok":
