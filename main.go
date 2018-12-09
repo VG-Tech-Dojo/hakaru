@@ -8,8 +8,6 @@ import (
 
 	"os"
 
-	"github.com/pkg/profile"
-
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -36,10 +34,6 @@ func hakaruHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-
-	//プロファイリング
-	defer profile.Start(profile.ProfilePath(".")).Stop()
-
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
@@ -52,12 +46,13 @@ func main() {
 	defer db_.Close()
 	db = db_
 
-	stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
+	stmt_, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
 	if e != nil {
 		panic(e.Error())
 	}
+	stmt = stmt_
 
-	defer stmt.Close()
+	defer stmt_.Close()
 
 	http.HandleFunc("/hakaru", hakaruHandler)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
