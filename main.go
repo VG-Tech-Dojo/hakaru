@@ -19,12 +19,12 @@ type EventLog struct {
 
 var (
 	db        *sql.DB
-	eventChan = make(chan EventLog, 500)
+	eventChan = make(chan EventLog, 2000)
 )
 
 func timerInsert() {
 	ticker := time.NewTicker(1 * time.Second)
-	querys := make([]EventLog, 0, 500)
+	querys := make([]EventLog, 0, 2000)
 	for {
 		select {
 		case <-ticker.C:
@@ -42,6 +42,7 @@ func timerInsert() {
 			if err != nil {
 				fmt.Println("SQL could not be executed")
 			}
+			querys = make([]EventLog, 0, 1000) // 初期化
 		case event := <-eventChan:
 			querys = append(querys, event)
 		}
