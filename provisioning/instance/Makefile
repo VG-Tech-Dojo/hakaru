@@ -22,6 +22,9 @@ clean:
 /etc/sysconfig/hakaru: sysconfig/hakaru
 	cp sysconfig/hakaru /etc/sysconfig/hakaru
 
+/etc/secutity/limits.conf: security/limits.conf
+	cp secutity/limits.conf /etc/secutity/limits.conf
+
 /etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service
 	systemctl daemon-reload
