@@ -67,13 +67,7 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 		Value: value,
 	}
 
-	origin := string(ctx.Request.Header.Peek("Origin")[0])
-	if origin != "" {
-		ctx.Response.Header.Set("Access-Control-Allow-Origin", origin)
-		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
-	} else {
-		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
-	}
+	ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
 	ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type")
 	ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET")
 }
