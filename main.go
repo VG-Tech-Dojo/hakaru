@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
 	"time"
@@ -47,7 +48,11 @@ func inserter() {
 				args[i+1] = que.Name
 				args[i+2] = que.Value
 			}
-			_, _ = stmt.Exec(args...)
+			_, err := stmt.Exec(args...)
+			if err != nil {
+				fmt.Println(err)
+			}
+
 			valueQue = make([]Value, 0, 1000)
 
 		case que := <-queCh:
@@ -73,9 +78,10 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 }
 
 func main() {
+	go inserter()
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
-		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+		dataSourceName = "root:mysql@tcp(127.0.0.1:3306)/hakaru-db"
 
 	}
 
