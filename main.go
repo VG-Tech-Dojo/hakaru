@@ -94,8 +94,8 @@ func main() {
 
 	db = _db
 
-	db.SetMaxIdleConns(20)
-	db.SetMaxOpenConns(20)
+	db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(5)
 	router := func(ctx *fasthttp.RequestCtx) {
 		switch string(ctx.Path()) {
 		case "/ok":
@@ -125,7 +125,7 @@ func beforeStart() {
 	instId := "local"
 	// instance idをとる
 	// localではむりかも?
-	resp, err := http.Get("169.254.169.254/latest/meta-data/instance-id/")
+	resp, err := http.Get("http://169.254.169.254/latest/meta-data/instance-id/")
 	if err != nil {
 		sendMessage("Instance " + instId + " start... Ver: " + version)
 		return
