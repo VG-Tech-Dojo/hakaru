@@ -18,11 +18,11 @@ type EventLog struct {
 }
 
 var (
-	db        *sql.DB
 	eventChan = make(chan EventLog, 2000)
 )
 
 func timerInsert() {
+	var db *sql.DB
 	ticker := time.NewTicker(1 * time.Second)
 	querys := make([]EventLog, 0, 2000)
 	for {
