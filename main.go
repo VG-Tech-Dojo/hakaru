@@ -99,25 +99,35 @@ func main() {
 		timeNotification.Stop()
 	}(requestCh)
 
-	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		requestCh <- r
-
-		origin := r.Header.Get("Origin")
-		if origin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
-		}
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Methods", "GET")
+	hakaru := HakaruHandler{
+		DB:        db,
+		requestCH: requestCh,
 	}
 
-	http.HandleFunc("/hakaru", hakaruHandler)
+	http.Handle("/hakaru", hakaru)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
 	// start server
 	if err := http.ListenAndServe(":8081", nil); err != nil {
 		log.Fatal(err)
 	}
+}
+
+type HakaruHandler struct {
+	DB        *sql.DB
+	requestCH chan *http.Request
+}
+
+func (h HakaruHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.requestCH <- r
+
+	origin := r.Header.Get("Origin")
+	if origin != "" {
+		w.Header().Set("Access-Control-Allow-Origin", origin)
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+	} else {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+	}
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
 }

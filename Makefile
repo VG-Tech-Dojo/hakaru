@@ -29,6 +29,7 @@ fmt:
 	gofmt -w .
 
 test:
+	docker-compose up -d
 	go test -v -tags=unit $$(go list ./... | grep -v '/vendor/')
 
 run: main.go
