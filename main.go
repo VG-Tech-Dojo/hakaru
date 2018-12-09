@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	kinesis "github.com/aws/aws-sdk-go/service/kinesis"
 	_ "github.com/go-sql-driver/mysql"
@@ -14,9 +13,10 @@ import (
 
 func main() {
 	sess := session.Must(session.NewSession())
-	cred := credentials.NewSharedCredentials("", "sunrise2018")
+	//cred := credentials.NewSharedCredentials("", "sunrise2018")
 
-	auth := kinesis.New(sess, &aws.Config{Credentials: cred, Region: aws.String("ap-northeast-1")})
+	//auth := kinesis.New(sess, &aws.Config{Credentials: cred, Region: aws.String("ap-northeast-1")})
+	auth := kinesis.New(sess, &aws.Config{Region: aws.String("ap-northeast-1")})
 	streamName := "hakaru-stream"
 
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
