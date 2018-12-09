@@ -3,7 +3,6 @@ package main
 import (
 	"container/list"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -32,7 +31,6 @@ func NewEventLog(name, value string) EventLog {
 }
 
 func RunDB(db *sql.DB, eventlogStack list.List) {
-	fmt.Println("INSERT NUM", eventlogStack.Len())
 	query := "INSERT INTO eventlog(at, name, value) values"
 	for i := 0; i < eventlogStack.Len(); i++ {
 		query += "(?, ?, ?)"
@@ -54,7 +52,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 		s = append(s, eventLog.Name)
 		s = append(s, eventLog.Value)
 	}
-	fmt.Println("args Num", len(s), "event num", eventlogStack.Len())
+	log.Println("Bulk insert args Num", len(s), "event num", eventlogStack.Len())
 	_, err = stmt.Exec(s...)
 	if err != nil {
 		panic(err)
