@@ -3,6 +3,8 @@ Description=hakaru server
 
 [Service]
 Type=simple
+LimitNOFILE=1006500
+LimitNPROC=1006500
 
 # プロセスが不意に終了した場合の挙動
 # no: 死んだまま always: 自動起動
