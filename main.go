@@ -1,26 +1,139 @@
 package main
 
 import (
+	"container/list"
+	"database/sql"
 	"log"
 	"net/http"
 
-	"database/sql"
-
 	"os"
+	"sync"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/pkg/profile"
 )
 
-var (
-	db   *sql.DB
-	stmt *sql.Stmt
-)
 
-func hakaruHandler(w http.ResponseWriter, r *http.Request) {
-	name := r.URL.Query().Get("name")
-	value := r.URL.Query().Get("value")
+const INSERT_TIME = 10
 
-	_, _ = stmt.Exec(name, value)
+
+type EventLog struct {
+	Name  string
+	Value string
+	Now   string
+}
+
+func NewEventLog(name, value string) EventLog {
+	// TODO mysqlのNOW()が何を作っているの確認
+	// https://stackoverflow.com/questions/23415612/insert-datetime-using-now-with-go
+	return EventLog{
+		Name:  name,
+		Value: value,
+		Now:   time.Now().Format("2006-01-02 15:04:05"),
+	}
+}
+
+func RunDB(db *sql.DB, eventlogStack list.List) {
+	query := "INSERT INTO eventlog(at, name, value) values"
+	for i := 0; i < eventlogStack.Len(); i++ {
+		query += "(?, ?, ?)"
+		if i != eventlogStack.Len()-1 {
+			query += ","
+		}
+	}
+	stmt, err := db.Prepare(query)
+	if err != nil {
+		panic(err.Error())
+	}
+	defer stmt.Close()
+
+	s := make([]interface{}, 0)
+	for i := 0; i < eventlogStack.Len(); i++ {
+		event := eventlogStack.Remove(eventlogStack.Front())
+		eventLog := event.(EventLog)
+		s = append(s, eventLog.Now)
+		s = append(s, eventLog.Name)
+		s = append(s, eventLog.Value)
+	}
+	log.Println("Bulk insert args Num", len(s), "event num", eventlogStack.Len())
+	_, err = stmt.Exec(s...)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func main() {
+	//プロファイリング
+	defer profile.Start(profile.ProfilePath(".")).Stop()
+
+
+	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
+	if dataSourceName == "" {
+		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+	}
+
+	db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer db.Close()
+
+	// insertの通知をするためのgoroutine
+	requestCh := make(chan *http.Request)
+	// バルクインサート周りを管理するgoroutine
+	go func(requestCh chan *http.Request) {
+		timeNotification := time.NewTicker(INSERT_TIME * time.Second)
+		eventlogStack := list.New()
+		cpyEveneLogStack := list.New()
+		_ = cpyEveneLogStack
+		mux := new(sync.Mutex)
+		for {
+			mux.Lock()
+			select {
+			case r := <-requestCh:
+				name := r.URL.Query().Get("name")
+				value := r.URL.Query().Get("value")
+
+				eventlogStack.PushBack(NewEventLog(name, value))
+				mux.Unlock()
+			case <-timeNotification.C:
+				if eventlogStack.Len() != 0 {
+					cpyEveneLogStack = eventlogStack
+					go RunDB(db, *eventlogStack)
+					eventlogStack = list.New()
+					mux.Unlock()
+				}
+			}
+		}
+		timeNotification.Stop()
+	}(requestCh)
+
+	hakaru := HakaruHandler{
+		DB:        db,
+		requestCH: requestCh,
+
+	}
+	stmt = stmt_
+
+	http.Handle("/hakaru", hakaru)
+
+	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
+
+	// start server
+	if err := http.ListenAndServe(":8081", nil); err != nil {
+		log.Fatal(err)
+	}
+}
+
+type HakaruHandler struct {
+	DB        *sql.DB
+	requestCH chan *http.Request
+}
+
+func (h HakaruHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.requestCH <- r
 
 	origin := r.Header.Get("Origin")
 	if origin != "" {
@@ -31,34 +144,4 @@ func hakaruHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 	w.Header().Set("Access-Control-Allow-Methods", "GET")
-}
-
-func main() {
-	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
-	if dataSourceName == "" {
-		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
-	}
-
-	db_, err := sql.Open("mysql", dataSourceName)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db_.Close()
-	db = db_
-
-	stmt_, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-	if e != nil {
-		panic(e.Error())
-	}
-	stmt = stmt_
-
-	defer stmt_.Close()
-
-	http.HandleFunc("/hakaru", hakaruHandler)
-	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
-
-	// start server
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		log.Fatal(err)
-	}
 }
