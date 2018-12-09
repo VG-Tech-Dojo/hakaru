@@ -5,7 +5,7 @@ import random
 url = 'http://localhost:8081/hakaru'
 
 def sendRequest():
-    payload = {'name': 'pykakeru', 'value': random.uniform(0, 200000)}
+    payload = {'name': 'pykakeru', 'value': random.randint(0, 2000000)}
     response = requests.get(url, params=payload)
     print(response.status_code)
 
