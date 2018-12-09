@@ -3,9 +3,11 @@ package main
 import (
 	"container/list"
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -29,11 +31,12 @@ func NewEventLog(name, value string) EventLog {
 	}
 }
 
-func RunDB(db *sql.DB, eventlogStack *list.List, queCount int) {
+func RunDB(db *sql.DB, eventlogStack list.List) {
+	fmt.Println("INSERT NUM", eventlogStack.Len())
 	query := "INSERT INTO eventlog(at, name, value) values"
-	for i := 0; i < queCount; i++ {
-		query += "(NOW(), ?, ?)"
-		if i != queCount {
+	for i := 0; i < eventlogStack.Len(); i++ {
+		query += "(?, ?, ?)"
+		if i != eventlogStack.Len()-1 {
 			query += ","
 		}
 	}
@@ -43,19 +46,15 @@ func RunDB(db *sql.DB, eventlogStack *list.List, queCount int) {
 	}
 	defer stmt.Close()
 
-	v := []string{}
-	for i := 0; i < queCount; i++ {
+	s := make([]interface{}, 0)
+	for i := 0; i < eventlogStack.Len(); i++ {
 		event := eventlogStack.Remove(eventlogStack.Front())
 		eventLog := event.(EventLog)
-		name := eventLog.Name
-		value := eventLog.Value
-		v = append(v, name)
-		v = append(v, value)
+		s = append(s, eventLog.Now)
+		s = append(s, eventLog.Name)
+		s = append(s, eventLog.Value)
 	}
-	s := make([]interface{}, len(v))
-	for i, v := range v {
-		s[i] = v
-	}
+	fmt.Println("args Num", len(s), "event num", eventlogStack.Len())
 	_, err = stmt.Exec(s...)
 	if err != nil {
 		panic(err)
@@ -79,20 +78,25 @@ func main() {
 	// バルクインサート周りを管理するgoroutine
 	go func(requestCh chan *http.Request) {
 		timeNotification := time.NewTicker(INSERT_TIME * time.Second)
-		queCount := 0
 		eventlogStack := list.New()
+		cpyEveneLogStack := list.New()
+		_ = cpyEveneLogStack
+		mux := new(sync.Mutex)
 		for {
+			mux.Lock()
 			select {
 			case r := <-requestCh:
 				name := r.URL.Query().Get("name")
 				value := r.URL.Query().Get("value")
+
 				eventlogStack.PushBack(NewEventLog(name, value))
-				queCount += 1
+				mux.Unlock()
 			case <-timeNotification.C:
-				if queCount != 0 {
-					RunDB(db, eventlogStack, queCount)
+				if eventlogStack.Len() != 0 {
+					cpyEveneLogStack = eventlogStack
+					go RunDB(db, *eventlogStack)
 					eventlogStack = list.New()
-					queCount = 0
+					mux.Unlock()
 				}
 			}
 		}
