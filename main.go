@@ -6,14 +6,15 @@ import (
 
 	"database/sql"
 
-	"github.com/pkg/profile"
 	"os"
+
+	"github.com/pkg/profile"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 var (
-	db *sql.DB,
+	db   *sql.DB
 	stmt *sql.Stmt
 )
 
