@@ -44,7 +44,6 @@ func Test_Main(t *testing.T) {
 	nameWant := "test"
 	valueWant := "1"
 	url := fmt.Sprintf("%s?name=%s&value=%s", ts.URL, nameWant, valueWant)
-	fmt.Println(url)
 
 	r, err := http.Get(url)
 	if err != nil {
