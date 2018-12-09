@@ -11,12 +11,10 @@ import (
 	"time"
 
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/profile"
+	//"github.com/pkg/profile"
 )
 
-
 const INSERT_TIME = 10
-
 
 type EventLog struct {
 	Name  string
@@ -65,8 +63,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 
 func main() {
 	//プロファイリング
-	defer profile.Start(profile.ProfilePath(".")).Stop()
-
+	//defer profile.Start(profile.ProfilePath(".")).Stop()
 
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
@@ -113,9 +110,7 @@ func main() {
 	hakaru := HakaruHandler{
 		DB:        db,
 		requestCH: requestCh,
-
 	}
-	stmt = stmt_
 
 	http.Handle("/hakaru", hakaru)
 
