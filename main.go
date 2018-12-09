@@ -2,11 +2,11 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"strings"
 	"time"
 
 	"github.com/jmoiron/sqlx"
+	"github.com/valyala/fasthttp"
 
 	"os"
 
@@ -30,11 +30,6 @@ func inserter() {
 	for {
 		select {
 		case <-ticker.C:
-			// TODO: Insert 処理
-			//stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-			//if e != nil {
-			//	panic(e.Error())
-			//}
 			if len(valueQue) == 0 {
 				continue
 			}
@@ -61,11 +56,10 @@ func inserter() {
 		}
 	}
 }
-
-func hakaruHandler(w http.ResponseWriter, r *http.Request) {
+func hakaruHandler(ctx *fasthttp.RequestCtx) {
 	now := time.Now()
-	name := r.URL.Query().Get("name")
-	value := r.URL.Query().Get("value")
+	name := string(ctx.QueryArgs().Peek("name"))
+	value := string(ctx.URI().QueryArgs().Peek("value"))
 
 	queCh <- Value{
 		Now:   now,
@@ -73,15 +67,15 @@ func hakaruHandler(w http.ResponseWriter, r *http.Request) {
 		Value: value,
 	}
 
-	origin := r.Header.Get("Origin")
+	origin := string(ctx.Request.Header.Peek("Origin")[0])
 	if origin != "" {
-		w.Header().Set("Access-Control-Allow-Origin", origin)
-		w.Header().Set("Access-Control-Allow-Credentials", "true")
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", origin)
+		ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 	} else {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
+		ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
 	}
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type")
+	ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET")
 }
 
 func main() {
@@ -101,12 +95,19 @@ func main() {
 
 	db.SetMaxIdleConns(20)
 	db.SetMaxOpenConns(20)
-
-	http.HandleFunc("/hakaru", hakaruHandler)
-	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
+	router := func(ctx *fasthttp.RequestCtx) {
+		switch string(ctx.Path()) {
+		case "/ok":
+			ctx.SetStatusCode(200)
+		case "/hakaru":
+			hakaruHandler(ctx)
+		default:
+			ctx.Error("not found", fasthttp.StatusNotFound)
+		}
+	}
 
 	// start server
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	if err := fasthttp.ListenAndServe(":8081", router); err != nil {
 		log.Fatal(err)
 	}
 }
