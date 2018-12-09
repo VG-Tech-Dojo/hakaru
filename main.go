@@ -3,7 +3,9 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+	"strconv"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -22,10 +24,12 @@ func main() {
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		value := r.URL.Query().Get("value")
+		str := name + ":" + value
+		id := strconv.Itoa(rand.Int())
 
 		record := &kinesis.PutRecordInput{
-			Data:         []byte(value),
-			PartitionKey: &name,
+			Data:         []byte(str),
+			PartitionKey: &id,
 			StreamName:   &streamName,
 		}
 
