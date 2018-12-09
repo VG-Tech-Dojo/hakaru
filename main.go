@@ -1,15 +1,53 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"log"
 	"net/http"
-
-	"database/sql"
-
 	"os"
-
-	_ "github.com/go-sql-driver/mysql"
+	"strings"
+	"time"
 )
+
+type EventLog struct {
+	Name  string    `db:"name"`
+	Value string    `db:"value"`
+	Now   time.Time `db:"at"`
+}
+
+var (
+	eventChan = make(chan EventLog, 2000)
+)
+
+func timerInsert() {
+	var db *sql.DB
+	ticker := time.NewTicker(1 * time.Second)
+	querys := make([]EventLog, 0, 2000)
+	for {
+		select {
+		case <-ticker.C:
+			if len(querys) == 0 {
+				continue
+			}
+			sqlStatement := "INSERT INTO eventlog(at, name, value) values(?, ?, ?)" + strings.Repeat(", (?,?,?)", len(querys)-1)
+			values := make([]interface{}, 3*len(querys))
+			for i, query := range querys {
+				values[3*i] = query.Now
+				values[3*i+1] = query.Name
+				values[3*i+2] = query.Value
+			}
+			_, err := db.Exec(sqlStatement, values...)
+			if err != nil {
+				fmt.Println("SQL could not be executed")
+			}
+			querys = make([]EventLog, 0, 1000) // 初期化
+		case event := <-eventChan:
+			querys = append(querys, event)
+		}
+	}
+}
 
 func main() {
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
@@ -17,26 +55,25 @@ func main() {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	}
 
+	_db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		fmt.Println("DB could not be opened")
+	}
+	defer _db.Close()
+
+	db = _db
+
+	db.SetMaxIdleConns(100)
+	db.SetMaxOpenConns(100)
+
+	go timerInsert()
+
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		go func() {
-			db, err := sql.Open("mysql", dataSourceName)
-			if err != nil {
-				panic(err.Error())
-			}
-			defer db.Close()
-
-			stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-			if e != nil {
-				panic(e.Error())
-			}
-
-			defer stmt.Close()
-
-			name := r.URL.Query().Get("name")
-			value := r.URL.Query().Get("value")
-
-			_, _ = stmt.Exec(name, value)
-		}()
+		var event EventLog
+		event.Name = r.URL.Query().Get("name")
+		event.Value = r.URL.Query().Get("value")
+		event.Now = time.Now().In(time.FixedZone("Asia/Tokyo", 9*60*60))
+		eventChan <- event
 
 		origin := r.Header.Get("Origin")
 		if origin != "" {
