@@ -6,3 +6,4 @@ hakaru
 vendor
 *.tgz
 
+*.pprof
