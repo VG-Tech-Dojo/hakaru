@@ -1,40 +1,41 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
-	"database/sql"
-
-	"os"
-
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	kinesis "github.com/aws/aws-sdk-go/service/kinesis"
 	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
-	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
-	if dataSourceName == "" {
-		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
-	}
+	sess := session.Must(session.NewSession())
+	cred := credentials.NewSharedCredentials("", "sunrise2018")
 
-	db, err := sql.Open("mysql", dataSourceName)
-	if err != nil {
-		panic(err.Error())
-	}
-	defer db.Close()
-
-	stmt, e := db.Prepare("INSERT INTO eventlog(at, name, value) values(NOW(), ?, ?)")
-	if e != nil {
-		panic(e.Error())
-	}
-
-	defer stmt.Close()
+	auth := kinesis.New(sess, &aws.Config{Credentials: cred, Region: aws.String("ap-northeast-1")})
+	streamName := "hakaru-stream"
 
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
 		name := r.URL.Query().Get("name")
 		value := r.URL.Query().Get("value")
 
-		_, _ = stmt.Exec(name, value)
+		record := &kinesis.PutRecordInput{
+			Data:         []byte(value),
+			PartitionKey: &name,
+			StreamName:   &streamName,
+		}
+
+		putsOutput, err := auth.PutRecord(record)
+
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("%v\n", putsOutput)
 
 		origin := r.Header.Get("Origin")
 		if origin != "" {
