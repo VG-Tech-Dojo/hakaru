@@ -6,8 +6,9 @@ import (
 
 	"database/sql"
 
-	_ "github.com/go-sql-driver/mysql"
 	"os"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var db *sql.DB
@@ -43,11 +44,13 @@ func main() {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	}
 
-	db, err := sql.Open("mysql", dataSourceName)
+	db_, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
-	defer db.Close()
+	defer db_.Close()
+
+	db = db_
 
 	http.HandleFunc("/hakaru", hakaruHandler)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
