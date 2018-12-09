@@ -4,7 +4,7 @@
 #
 .PHONY: all cloud-config yum app
 
-all: cloud-config yum app
+all: cloud-config yum fd app
 
 cloud-config: cloud.cfg.d/99_defaults.cfg
 	cp cloud.cfg.d/99_defaults.cfg /etc/cloud/cloud.cfg.d/
@@ -26,5 +26,8 @@ yum:
 
 /root/hakaru/Makefile: deploy/Makefile /root/hakaru/team_name.txt /root/hakaru
 	cp deploy/Makefile /root/hakaru/Makefile
+
+fd:
+	ulimit -n 65535
 
 app: /root/hakaru/Makefile
