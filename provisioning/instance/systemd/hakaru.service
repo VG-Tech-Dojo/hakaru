@@ -19,5 +19,8 @@ ExecReload=/bin/kill -HUP $MAINPID && /opt/hakaru/bin/hakaru
 EnvironmentFile=/etc/sysconfig/hakaru
 User=root
 
+LimitNOFILE=1006500
+LimitNPROC=1006500
+
 [Install]
 WantedBy=multi-user.target
