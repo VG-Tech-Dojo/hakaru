@@ -55,3 +55,4 @@ ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
 upload: clean artifacts.tgz
 	aws s3 cp artifacts.tgz s3://$(ARTIFACTS_BUCKET)/latest/artifacts.tgz
 	aws s3 cp artifacts.tgz s3://$(ARTIFACTS_BUCKET)/$$(git rev-parse HEAD)/artifacts.tgz
+	aws ssm send-command --document-name "AWS-RunShellScript" --document-version "\$DEFAULT" --targets '[{"Key":"tag:favorite","Values":["beer"]}]' --parameters '{"workingDirectory":[""],"executionTimeout":["3600"],"commands":["make -C /root/hakaru"]}' --timeout-seconds 600 --max-concurrency "50" --max-errors "0" --region ap-northeast-1
