@@ -21,8 +21,8 @@ func main() {
 	}
 	defer db.Close()
 
-	db.SetMaxIdleConns(30)
-	db.SetMaxOpenConns(30)
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(10)
 
 	hakaru := HakaruHandler{DB: db}
 
