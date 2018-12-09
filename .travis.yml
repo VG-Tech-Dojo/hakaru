@@ -27,6 +27,9 @@ before_install:
 install:
   - make install
 
+test:
+  - make test
+
 script:
   - make build
 
