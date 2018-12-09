@@ -25,6 +25,21 @@ func timerInsert() {
 	var db *sql.DB
 	ticker := time.NewTicker(1 * time.Second)
 	querys := make([]EventLog, 0, 2000)
+	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
+	if dataSourceName == "" {
+		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+	}
+
+	_db, err := sql.Open("mysql", dataSourceName)
+	if err != nil {
+		fmt.Println("DB could not be opened")
+	}
+	defer _db.Close()
+
+	db = _db
+
+	db.SetMaxIdleConns(100)
+	db.SetMaxOpenConns(100)
 	for {
 		select {
 		case <-ticker.C:
@@ -42,7 +57,7 @@ func timerInsert() {
 			if err != nil {
 				fmt.Println("SQL could not be executed")
 			}
-			querys = make([]EventLog, 0, 1000) // 初期化
+			querys = make([]EventLog, 0, 2000) // 初期化
 		case event := <-eventChan:
 			querys = append(querys, event)
 		}
@@ -50,22 +65,6 @@ func timerInsert() {
 }
 
 func main() {
-	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
-	if dataSourceName == "" {
-		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
-	}
-
-	_db, err := sql.Open("mysql", dataSourceName)
-	if err != nil {
-		fmt.Println("DB could not be opened")
-	}
-	defer _db.Close()
-
-	db = _db
-
-	db.SetMaxIdleConns(100)
-	db.SetMaxOpenConns(100)
-
 	go timerInsert()
 
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
