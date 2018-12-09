@@ -6,7 +6,7 @@ from joblib import Parallel, delayed
 url = 'http://localhost:8081/hakaru'
 
 def sendRequest():
-    payload = {'name': 'aaaaaa', 'value': random.randint(0, 2000000)}
+    payload = {'name': 'pykakeru', 'value': random.randint(0, 2000000)}
     response = requests.get(url, params=payload)
     print(response.status_code)
 
