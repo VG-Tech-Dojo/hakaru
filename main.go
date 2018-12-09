@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"net/url"
@@ -76,7 +77,7 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 var version = "unknown"
 
 func main() {
-	sendMessage("Instance " + os.Getenv("HOSTNAME") + " start... Ver: " + version)
+	beforeStart()
 	fmt.Println(version + " start.\n" + time.Now().Format(time.RFC850))
 	go inserter()
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
@@ -118,6 +119,23 @@ type Slack struct {
 	Icon_emoji string `json:"icon_emoji"`
 	Icon_url   string `json:"icon_url"`
 	Channel    string `json:"channel"`
+}
+
+func beforeStart() {
+	instId := "local"
+	// instance idをとる
+	// localではむりかも?
+	resp, err := http.Get("169.254.169.254/latest/meta-data/instance-id/")
+	if err != nil {
+		sendMessage("Instance " + instId + " start... Ver: " + version)
+		return
+	}
+	defer resp.Body.Close()
+
+	byteArray, _ := ioutil.ReadAll(resp.Body)
+	instId = string(byteArray)
+
+	sendMessage("Instance " + instId + " start... Ver: " + version)
 }
 
 func sendMessage(msg string) {
