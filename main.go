@@ -76,6 +76,7 @@ func hakaruHandler(ctx *fasthttp.RequestCtx) {
 var version = "unknown"
 
 func main() {
+	fmt.Println(os.Environ())
 	sendMessage("Instance " + os.Getenv("HOSTNAME") + " start... Ver: " + version)
 	fmt.Println(version + " start.\n" + time.Now().Format(time.RFC850))
 	go inserter()
