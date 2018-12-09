@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/valyala/fasthttp"
 	"log"
-	"net/http"
 	"os"
 	"strings"
 	"time"
@@ -64,32 +64,33 @@ func timerInsert() {
 	}
 }
 
+func hakaruHandler(ctx *fasthttp.RequestCtx) {
+	var event EventLog
+	event.Name = string(ctx.QueryArgs().Peek("name"))
+	event.Value = string(ctx.URI().QueryArgs().Peek("value"))
+	event.Now = time.Now().In(time.FixedZone("Asia/Tokyo", 9*60*60))
+	eventChan <- event
+
+	ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
+	ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type")
+	ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET")
+}
+
 func main() {
 	go timerInsert()
-
-	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
-		var event EventLog
-		event.Name = r.URL.Query().Get("name")
-		event.Value = r.URL.Query().Get("value")
-		event.Now = time.Now().In(time.FixedZone("Asia/Tokyo", 9*60*60))
-		eventChan <- event
-
-		origin := r.Header.Get("Origin")
-		if origin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
-		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+	router := func(ctx *fasthttp.RequestCtx) {
+		switch string(ctx.Path()) {
+		case "/ok":
+			ctx.SetStatusCode(200)
+		case "/hakaru":
+			hakaruHandler(ctx)
+		default:
+			ctx.Error("not found", fasthttp.StatusNotFound)
 		}
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Methods", "GET")
 	}
 
-	http.HandleFunc("/hakaru", hakaruHandler)
-	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
-
 	// start server
-	if err := http.ListenAndServe(":8081", nil); err != nil {
+	if err := fasthttp.ListenAndServe(":8081", router); err != nil {
 		log.Fatal(err)
 	}
 }
