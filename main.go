@@ -71,9 +71,6 @@ func main() {
 	}
 	defer db.Close()
 
-	db.SetMaxIdleConns(10)
-	db.SetMaxOpenConns(10)
-
 	// insertの通知をするためのgoroutine
 	requestCh := make(chan *http.Request)
 	// バルクインサート周りを管理するgoroutine
