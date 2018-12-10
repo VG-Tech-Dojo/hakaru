@@ -40,7 +40,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 	}
 	stmt, err := db.Prepare(query)
 	if err != nil {
-		panic(err.Error())
+		log.Fatal(err.Error())
 	}
 	defer stmt.Close()
 
@@ -55,7 +55,7 @@ func RunDB(db *sql.DB, eventlogStack list.List) {
 	log.Println("Bulk insert args Num", len(s), "event num", eventlogStack.Len())
 	_, err = stmt.Exec(s...)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }
 
@@ -67,7 +67,7 @@ func main() {
 
 	db, err := sql.Open("mysql", dataSourceName)
 	if err != nil {
-		panic(err.Error())
+		log.Fatal(err.Error())
 	}
 	defer db.Close()
 
@@ -78,24 +78,27 @@ func main() {
 		timeNotification := time.NewTicker(INSERT_TIME * time.Second)
 		eventlogStack := list.New()
 		cpyEveneLogStack := list.New()
+		emptyStack := list.New()
 		_ = cpyEveneLogStack
 		mux := new(sync.Mutex)
 		for {
-			mux.Lock()
 			select {
 			case r := <-requestCh:
-				name := r.URL.Query().Get("name")
-				value := r.URL.Query().Get("value")
-
-				eventlogStack.PushBack(NewEventLog(name, value))
+				mux.Lock()
+				go func() {
+					name := r.URL.Query().Get("name")
+					value := r.URL.Query().Get("value")
+					eventlogStack.PushBack(NewEventLog(name, value))
+				}()
 				mux.Unlock()
 			case <-timeNotification.C:
+				mux.Lock()
 				if eventlogStack.Len() != 0 {
 					cpyEveneLogStack = eventlogStack
 					go RunDB(db, *eventlogStack)
-					eventlogStack = list.New()
-					mux.Unlock()
+					eventlogStack = emptyStack
 				}
+				mux.Unlock()
 			}
 		}
 		timeNotification.Stop()
