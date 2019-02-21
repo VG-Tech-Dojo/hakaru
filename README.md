@@ -40,13 +40,9 @@ $ make upload
 
 1. AMI をビルドする
 1. AMIからEC2インスタンスを起動する
+1. 起動するEC2インスタンスの User data に ./user_data.sh の内容をコピペする
 1. EC2インスタンスをロードバランサーに紐付る
-
-or
-
-1. AMIからEC2インスタンスを起動する
-    1. 起動するEC2インスタンスの User data に ./user_data.sh の内容をコピペする
-1. EC2インスタンスをロードバランサーに紐付る
+1. 古いEC2インスタンスを終了する
 
 ### in-place deployment
 
@@ -54,7 +50,7 @@ or
 1. インスタンス上でコマンドを実行する
 
 ```bash
-$ sudo su -l 
+$ sudo su -l
 # cd /root/hakaru
 # make ARTIFACTS_COMMIT=latest
 ```

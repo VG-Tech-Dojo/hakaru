@@ -65,13 +65,6 @@
     {
       "type": "shell",
       "inline": [
-        "sudo make -C /root/hakaru ARTIFACTS_COMMIT=latest"
-      ]
-    },
-
-    {
-      "type": "shell",
-      "inline": [
         "sudo rm -rf /var/lib/yum && sudo yum clean all",
         "sudo rm -rf /tmp/files /home/ec2-user/files",
         "sudo rm -f /home/ec2-user/etc /home/ec2-user/.ssh/authorized_keys",
