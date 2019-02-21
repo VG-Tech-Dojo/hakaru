@@ -42,9 +42,17 @@ clean:
 
 # deployment
 
-artifacts.tgz: db team_name.txt provisioning/instance
+ARTIFACTS_TMPDIR := $(shell mktemp -u)/artifacts
+
+$(ARTIFACTS_TMPDIR): provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
-	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
+	mkdir -p $(ARTIFACTS_TMPDIR)
+	cp -r provisioning/instance/* $(ARTIFACTS_TMPDIR)
+	cp hakaru $(ARTIFACTS_TMPDIR)
+
+artifacts.tgz: $(ARTIFACTS_TMPDIR)
+	tar czf artifacts.tgz -C $(ARTIFACTS_TMPDIR) .
+	rm -rf $(ARTIFACTS_TMPDIR)
 
 export AWS_PROFILE        ?= sunrise2018
 export AWS_DEFAULT_REGION := ap-northeast-1

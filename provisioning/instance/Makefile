@@ -1,11 +1,22 @@
 # instance setup
 #
-# /root/hakaru/app/provisioning/instance/Makefile on ec2 instance
+# /root/hakaru/app/Makefile on ec2 instance
 #
 
-.PHONY: all clean hakaru amazon-cloudwatch-agent healthcheck
+# artifacts.tgz が /root/hakaru/app 展開されて、以下のようになる
+#.
+#├── Makefile
+#├── amazon-cloudwatch-agent
+#│   └── amazon-cloudwatch-agent.json
+#├── hakaru
+#├── sysconfig
+#│   └── hakaru
+#└── systemd
+#    └── hakaru.service
 
-all: clean amazon-cloudwatch-agent hakaru healthcheck
+.PHONY: all clean hakaru-daemon amazon-cloudwatch-agent healthcheck
+
+all: clean amazon-cloudwatch-agent hakaru-daemon healthcheck
 
 clean:
 	-systemctl stop hakaru
@@ -15,7 +26,7 @@ clean:
 /opt/hakaru/bin:
 	mkdir -p /opt/hakaru/bin
 
-/opt/hakaru/bin/hakaru: ../../hakaru /opt/hakaru/bin
+/opt/hakaru/bin/hakaru: hakaru /opt/hakaru/bin
 	cp ../../hakaru /opt/hakaru/bin/hakaru
 	chmod +x /opt/hakaru/bin/hakaru
 
@@ -27,7 +38,7 @@ clean:
 	systemctl daemon-reload
 	systemctl list-unit-files --type=service | grep hakaru
 
-hakaru: /etc/systemd/system/hakaru.service
+hakaru-daemon: /etc/systemd/system/hakaru.service
 	systemctl start hakaru
 	systemctl enable hakaru
 

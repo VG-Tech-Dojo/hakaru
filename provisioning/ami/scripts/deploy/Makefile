@@ -11,7 +11,7 @@ ARTIFACTS_COMMIT ?= latest
 
 
 all: clean /root/hakaru/app
-	$(MAKE) -C /root/hakaru/app/provisioning/instance
+	$(MAKE) -C /root/hakaru/app
 
 clean:
 	rm -rf /tmp/artifacts.tgz /root/hakaru/app
