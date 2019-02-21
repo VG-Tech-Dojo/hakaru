@@ -3,7 +3,7 @@
 
 TEAMNAME := $(shell head -n1 ../../team_name.txt)
 
-export AWS_PROFILE        ?= sunrise2018
+export AWS_PROFILE        ?= $(TEAMNAME)
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 #ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)

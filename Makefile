@@ -46,7 +46,7 @@ artifacts.tgz: db team_name.txt provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
 	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
 
-export AWS_PROFILE        ?= sunrise2018
+export AWS_PROFILE        ?= $(TEAMNAME)
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
