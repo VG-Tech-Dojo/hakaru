@@ -7,10 +7,14 @@ import (
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
+	_ "net/http/pprof"
 	"os"
 )
 
 func main() {
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
@@ -48,6 +52,9 @@ func main() {
 
 	http.HandleFunc("/hakaru", hakaruHandler)
 	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
+
+	//http.HandleFunc("/", hakaruHandler)
+	//http.ListenAndServe(":8080", nil)
 
 	// start server
 	if err := http.ListenAndServe(":8081", nil); err != nil {
