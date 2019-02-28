@@ -2,6 +2,7 @@
 Description=hakaru server
 
 [Service]
+LimitNOFILE=65536
 Type=simple
 
 # プロセスが不意に終了した場合の挙動
