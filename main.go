@@ -4,6 +4,7 @@ import (
 	"net/http"
 	_ "net/http/pprof"
 	"log"
+	"runtime"
 
 	"database/sql"
 
@@ -12,6 +13,7 @@ import (
 )
 
 func main() {
+	runtime.SetBlockProfileRate(1)
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
