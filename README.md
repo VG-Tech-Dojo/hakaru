@@ -54,3 +54,24 @@ $ sudo su -l
 # cd /root/hakaru
 # make ARTIFACTS_COMMIT=latest
 ```
+
+## プロファイリングについて
+
+サーバーを立ち上げて、リクエストを飛ばすとプロファイリングされます。  
+プロファイリングデータは次の例に示すurlから取得できます。  
+詳細はnet/http/pprofのドキュメントを参照してください。
+
+```bash
+http://{インスタンスのip}:8081/debug/pprof/heap
+http://{インスタンスのip}:8081/debug/pprof/block
+http://{インスタンスのip}:8081/debug/pprof/goroutine
+http://{インスタンスのip}:8081/debug/pprof/threadcreate
+http://{インスタンスのip}:8081/debug/pprof/mutex
+```
+
+取得したプロファイリングデータは次の方法で閲覧できます。  
+
+- リクエストを飛ばす
+  - kakeruやhakaru/util/curl.pyやcurlコマンドを使う
+- ローカルで次のコマンドを実行する`go tool pprof -http=localhost:8080 http://{インスタンスのip}:8081/debug/pprof/block`
+- `http://localhost:8080/`へアクセスする。
