@@ -1,10 +1,7 @@
 package main
 
 import (
-	"net/http"
-	_ "net/http/pprof"
-	"log"
-	"runtime"
+	"github.com/valyala/fasthttp"
 
 	"database/sql"
 
@@ -12,14 +9,17 @@ import (
 	"os"
 )
 
+func okHandler(ctx *fasthttp.RequestCtx) {
+    ctx.SetStatusCode(fasthttp.StatusOK) 
+}
+
 func main() {
-	runtime.SetBlockProfileRate(1)
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
 		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
 	}
 
-	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {
+	hakaruHandler := func(ctx *fasthttp.RequestCtx) {
 		db, err := sql.Open("mysql", dataSourceName)
 		if err != nil {
 			panic(err.Error())
@@ -33,27 +33,35 @@ func main() {
 
 		defer stmt.Close()
 
-		name := r.URL.Query().Get("name")
-		value := r.URL.Query().Get("value")
+		name := string(ctx.QueryArgs().Peek("name"))
+		value := string(ctx.QueryArgs().Peek("value"))
 
 		_, _ = stmt.Exec(name, value)
 
-		origin := r.Header.Get("Origin")
+		origin := string(ctx.Request.Header.Peek("Origin"))
 		if origin != "" {
-			w.Header().Set("Access-Control-Allow-Origin", origin)
-			w.Header().Set("Access-Control-Allow-Credentials", "true")
+			ctx.Response.Header.Set("Access-Control-Allow-Origin", origin)
+			ctx.Response.Header.Set("Access-Control-Allow-Credentials", "true")
 		} else {
-			w.Header().Set("Access-Control-Allow-Origin", "*")
+			ctx.Response.Header.Set("Access-Control-Allow-Origin", "*")
 		}
-		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-		w.Header().Set("Access-Control-Allow-Methods", "GET")
+		ctx.Response.Header.Set("Access-Control-Allow-Headers", "Content-Type")
+		ctx.Response.Header.Set("Access-Control-Allow-Methods", "GET")
 	}
 
-	http.HandleFunc("/hakaru", hakaruHandler)
-	http.HandleFunc("/ok", func(w http.ResponseWriter, r *http.Request) { w.WriteHeader(200) })
 
-	// start server
-	if err := http.ListenAndServe(":8081", nil); err != nil {
-		log.Fatal(err)
-	}
+	requestHandler := func(ctx *fasthttp.RequestCtx) {
+        // ctx.Path()がnet/httpでいうr.URL.Pathにあたる
+        switch string(ctx.Path()) {
+        // "/"に対しての処理
+        case "/ok":
+			okHandler(ctx)
+        case "/hakaru":
+			hakaruHandler(ctx)
+        default:
+            ctx.Error("Unsupported path", fasthttp.StatusNotFound)
+        }
+    }
+    // 8080でサーバを起動
+	fasthttp.ListenAndServe(":8081", requestHandler)
 }
