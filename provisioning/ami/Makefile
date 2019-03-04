@@ -13,7 +13,7 @@ ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
 # https://hub.docker.com/r/hashicorp/packer/tags/
 PACKER_VERSION := 1.3.2
 
-.PHONY: all clean check_artifacts build
+.PHONY: all clean build
 
 all: clean build
 
@@ -26,12 +26,7 @@ scripts.tgz: scripts scripts/deploy/team_name.txt
 clean:
 	-rm -rf *.tgz scripts/deploy/team_name.txt
 
-check_artifacts:
-	@echo 'artifacts checking ...'
-	@echo "use:"
-	aws s3 ls s3://$(ARTIFACTS_BUCKET)/$(ARTIFACTS_COMMIT)/artifacts.tgz
-
-build: scripts.tgz check_artifacts
+build: scripts.tgz
 	docker run --rm -it \
 		-v ~/.aws:/root/.aws \
 		-e TZ=Asia/Tokyo \
