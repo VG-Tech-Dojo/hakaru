@@ -1,6 +1,6 @@
 TEAMNAME := $(shell head -n1 team_name.txt)
 
-.PHONY: all install dep-ensure dep-ensure-update imports fmt test run build clean upload
+.PHONY: all install imports fmt test run build clean upload
 
 GOOS   ?=
 GOARCH ?=
@@ -8,19 +8,7 @@ GOSRC  := $(GOPATH)/src
 
 all: install run
 
-install: dep-ensure
-
-dep-ensure: Gopkg.toml
-	test -x $(GOPATH)/bin/dep || go get github.com/golang/dep/...
-	$(GOPATH)/bin/dep ensure -v -vendor-only=true
-
-dep-ensure-update: Gopkg.toml
-	test -x $(GOPATH)/bin/dep || go get github.com/golang/dep/...
-	$(GOPATH)/bin/dep ensure -v --update
-
-Gopkg.toml:
-	test -x $(GOPATH)/bin/dep || go get github.com/golang/dep/...
-	$(GOPATH)/bin/dep init
+install:
 
 imports:
 	goimports -w .
