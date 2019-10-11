@@ -3,14 +3,14 @@
 [travis-img]: https://travis-ci.com/voyagegroup/hakaru.svg?token=iBCGFnZyWWvHWvMJnnx3&branch=master
 [travis-url]: https://travis-ci.com/voyagegroup/hakaru
 
-Sunrise2018: 素朴な計測サーバ
+Sunrise2019: 素朴な計測サーバ
 
 ## manually initial setup checklist
 
-- [ ] voyagegroup/sunrise2018 での `make apply` が完了している
+- [ ] voyagegroup/sunrise2019 での `make apply` が完了している
 - [ ] ./team_name.txt の1行目をチーム名に変更している
-- [ ] ./provisioning/ami/packer.json を voyagegroup/sunrise2018 hakaru/README.md の通りに変更している
-- [ ] ./provisioning/instance/sysconfig/hakaru を voyagegroup/sunrise2018 hakaru/README.md の通りに変更している
+- [ ] ./provisioning/ami/packer.json を voyagegroup/sunrise2019 hakaru/README.md の通りに変更している
+- [ ] ./provisioning/instance/sysconfig/hakaru を voyagegroup/sunrise2019 hakaru/README.md の通りに変更している
 
 ## build AMI
 
@@ -21,7 +21,7 @@ $ make
 
 ### launch EC2 instance
 
-voyagegroup/sunrise2018 hakaru/README.md を参考にしてください
+voyagegroup/sunrise2019 hakaru/README.md を参考にしてください
 
 ## deployment
 
