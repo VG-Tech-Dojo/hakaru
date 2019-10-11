@@ -8,7 +8,7 @@ GOSRC  := $(GOPATH)/src
 
 all: install run
 
-install: dep-ensure
+install:
 
 imports:
 	goimports -w .
