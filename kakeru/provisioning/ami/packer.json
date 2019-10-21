@@ -1,0 +1,72 @@
+{
+  "description": "kakeru app",
+
+  "variables": {
+    "AWS_ACCOUNT_ID": "139990579284",
+    "subnet_id": "subnet-07f0657a9db896e1a",
+    "security_group_id": "sg-0d880f207a5d393d4"
+  },
+
+  "builders": [
+    {
+      "type": "amazon-ebs",
+      "profile": "{{user `TEAMNAME`}}",
+      "region": "ap-northeast-1",
+
+      "ami_name": "kakeru - {{isotime \"20060102150405\"}}",
+      "ami_description": "kakeru instance image",
+      "ami_users": [
+        "{{user `AWS_ACCOUNT_ID`}}"
+      ],
+      "tags": {
+        "Timestamp": "{{timestamp}}",
+        "SourceAMI": "{{ .SourceAMI }}",
+        "SourceAMIName": "{{ .SourceAMIName }}"
+      },
+      "source_ami": "ami-0238fc6af6bba5241",
+
+      "subnet_id": "{{user  `subnet_id`}}",
+      "security_group_id": "{{user `security_group_id`}}",
+      "associate_public_ip_address": true,
+      "ssh_username": "ubuntu",
+      "ssh_interface": "public_ip",
+      "instance_type": "t3.micro",
+      "iam_instance_profile": "kakeru-ec2",
+      "sriov_support": true,
+      "ena_support": true,
+      "user_data_file": "{{template_dir}}/scripts/cloud.cfg.d/99_defaults.cfg"
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"
+      ]
+    },
+
+    {
+      "type": "file",
+      "source": "{{template_dir}}/scripts.tgz",
+      "destination": "/var/tmp/scripts.tgz"
+    },
+    {
+      "type": "shell",
+      "inline": [
+        "sudo apt-get -y update",
+        "sudo apt-get -y install make",
+        "mkdir -p /var/tmp/scripts",
+        "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
+        "rm -rf /var/tmp/scripts.tgz",
+        "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}",
+        "sudo mkdir /opt/kakeru",
+        "sudo cp /var/tmp/scripts/deploy/Makefile /opt/kakeru/Makefile",
+        "sudo cp /var/tmp/scripts/deploy/team_name.txt /opt/kakeru/team_name.txt",
+        "sudo chown -R ubuntu:ubuntu /opt/kakeru"
+      ]
+    }
+  ],
+
+  "post-processors": []
+}
