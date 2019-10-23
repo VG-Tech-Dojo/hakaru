@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE tsung SYSTEM "/opt/erlang/R16B03-1/share/tsung/tsung-1.0.dtd">
+<tsung loglevel="debug" version="1.0">
+  <clients>
+    {clients}
+  </clients>
+  <servers>
+    <server host="{host}" port="{port}" type="tcp"></server>
+  </servers>
+  <load>
+
+    <!-- 一分間1秒に10ユーザーずつ作る -->
+    <arrivalphase phase="1" duration="1" unit="minute">
+      <users arrivalrate="10" unit="second"></users>
+    </arrivalphase>
+
+    <!-- 3分間1秒に200ユーザーずつ作る -->
+    <arrivalphase phase="2" duration="3" unit="minute">
+      <users arrivalrate="200" unit="second"></users>
+    </arrivalphase>
+
+  </load>
+  <options>
+    <option type="ts_http" name="user_agent" >
+      <user_agent probability="100">Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36</user_agent>
+    </option>
+  </options>
+
+  <!-- 90%がoepn, 9%が120円課金, 1%g960円課金 -->
+  <sessions>
+    <session name="open" probability="90" type="ts_http">
+      <request>
+        <http url="/hakaru?name=open&amp;value=0" method="GET" version="1.1" >
+        </http>
+      </request>
+    </session>
+    <session name="purchase120" probability="9" type="ts_http">
+      <request>
+        <http url="/hakaru?name=purchase&amp;value=120" method="GET" version="1.1" >
+        </http>
+      </request>
+    </session>
+    <session name="purchase960" probability="1" type="ts_http">
+      <request>
+        <http url="/hakaru?name=purchase&amp;value=960" method="GET" version="1.1" >
+        </http>
+      </request>
+    </session>
+  </sessions>
+</tsung>
