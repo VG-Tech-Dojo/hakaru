@@ -14,7 +14,7 @@ import boto3
 import ec2
 import slave
 
-webhook = 'https://hooks.slack.com/services/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'
+webhook = 'incoming webhook url'
 METADATA = 'http://169.254.169.254/latest/meta-data/local-ipv4'
 
 
