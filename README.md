@@ -12,6 +12,17 @@ Sunrise2019: 素朴な計測サーバ
 - [ ] ./provisioning/ami/packer.json を voyagegroup/sunrise2019 hakaru/README.md の通りに変更している
 - [ ] ./provisioning/instance/sysconfig/hakaru を voyagegroup/sunrise2019 hakaru/README.md の通りに変更している
 
+## build hakaru
+
+1. hakaru のビルドを実施し、成果物をアップロードする
+
+*ビルド/アップロードを自動化する場合は .travis.yml を参考に*
+
+```bash
+$ make install
+$ make upload
+```
+
 ## build AMI
 
 ```bash
@@ -24,15 +35,6 @@ $ make
 voyagegroup/sunrise2019 hakaru/README.md を参考にしてください
 
 ## deployment
-
-1. ビルドを実施し、成果物をアップロードする
-
-*ビルド/アップロードを自動化する場合は .travis.yml を参考に*
-
-```bash
-$ make install
-$ make upload
-```
 
 1. blue/green or in-place のどちらかを実施する
 
