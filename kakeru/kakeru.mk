@@ -1,6 +1,5 @@
 export AWS_DEFAULT_REGION ?= ap-northeast-1
 
-KAKERU_REPORT := sunrise201911-kakeru-report
 REPORT_BUCKET := sunrise201911-kakeru-report
 
 HOST:=localhost
