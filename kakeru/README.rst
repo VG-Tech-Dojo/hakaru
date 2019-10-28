@@ -46,7 +46,7 @@ provisioning/ami/packer.json の部分を環境に合わせて変更する。
 
    $ ssh -i ${インスタンスを立てたときの.pem} ubuntu@${対象インスタンスのipv4 dns名}
    # cd /opt/kakeru
-   # make # artifactsからアプリケーション配備するやつ
+   # make deploy # artifactsからアプリケーション配備するやつ
    # make -C app kakeru upload HOST=${ELBエンドポイントのドメイン} SCENARIO=${1,2,3}
 
 実行結果は {チーム名}-kakeru-report のバケットにアップロードされるので、見てみましょう。
@@ -101,6 +101,6 @@ ASGのdesiredを ``希望する台数+1`` にしてインスタンスを立て�
 
    $ ssh -i ${インスタンスを立てたときの.pem} ubuntu@${いずれかのインスタンス}
    # cd /opt/kakeru
-   # make
+   # make deploy
 
 マルチノードの場合は kakeru を実行するインスタンスだけでデプロイすればOK

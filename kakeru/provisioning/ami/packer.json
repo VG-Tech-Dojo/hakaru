@@ -61,8 +61,6 @@
         "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
         "rm -rf /var/tmp/scripts.tgz",
         "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}",
-        "sudo mkdir /opt/kakeru",
-        "sudo cp /var/tmp/scripts/deploy/Makefile /opt/kakeru/Makefile",
         "sudo chown -R ubuntu:ubuntu /opt/kakeru"
       ]
     }

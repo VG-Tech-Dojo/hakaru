@@ -1,10 +1,10 @@
-# provisioning (run only in building ami)
+# provisioning targets (run only in ami building)
 #
 # パッケージのインストール等はここでやる
 #
 .PHONY: all cloud-config apt awscli ssh ulimit
 
-all: cloud-config apt awscli ssh ulimit
+all: cloud-config apt awscli ssh ulimit deploy
 
 cloud-config: cloud.cfg.d/99_defaults.cfg
 	cp cloud.cfg.d/99_defaults.cfg /etc/cloud/cloud.cfg.d/
@@ -36,3 +36,29 @@ ulimit:
 	echo 'root soft nofile 65536' >> /etc/security/limits.conf
 	echo 'root hard nofile 65536' >> /etc/security/limits.conf
 	echo 'session    required     pam_limits.so' >> /etc/pam.d/common-session
+
+/opt/kakeru:
+	mkdir -p /opt/kakeru
+
+/opt/kakeru/Makefile: Makefile
+	cp Makefile /opt/kakeru/Makefile
+
+# application deployment
+#
+# /opt/kakeru/Makefile on ec2 instance
+#
+
+ARTIFACTS_BUCKET ?= sunrise201911-kakeru-artifacts
+ARTIFACTS_COMMIT ?= latest
+
+deploy: clean /opt/kakeru/app
+
+clean:
+	-rm -rf /tmp/kakeru.zip /opt/kakeru/app
+
+/tmp/kakeru.zip:
+	aws s3 cp s3://$(ARTIFACTS_BUCKET)/$(ARTIFACTS_COMMIT)/kakeru.zip /tmp/kakeru.zip
+
+/opt/kakeru/app: /tmp/kakeru.zip
+	mkdir -p /opt/kakeru/app
+	unzip -d /opt/kakeru/app /tmp/kakeru.zip
