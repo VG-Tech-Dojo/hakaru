@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 cd /root/hakaru
-make ARTIFACTS_COMMIT=latest
+make deploy ARTIFACTS_COMMIT=latest

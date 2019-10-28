@@ -1,4 +1,4 @@
-# provisioning (run only in ami building)
+# provisioning target (run only in ami building)
 #
 # パッケージのインストール等はここでやる
 #
@@ -22,7 +22,28 @@ yum:
 /root/hakaru:
 	mkdir -p /root/hakaru
 
-/root/hakaru/Makefile: deploy/Makefile /root/hakaru
-	cp deploy/Makefile /root/hakaru/Makefile
+/root/hakaru/Makefile: Makefile /root/hakaru
+	cp Makefile /root/hakaru/Makefile
 
 app: /root/hakaru/Makefile
+
+# application deployment
+#
+# /root/hakaru/Makefile on ec2 instance
+#
+
+ARTIFACTS_BUCKET ?= sunrise201911-hakaru-artifacts
+ARTIFACTS_COMMIT ?= latest
+
+deploy: clean /root/hakaru/app
+	$(MAKE) -C /root/hakaru/app/provisioning/instance
+
+clean:
+	rm -rf /tmp/artifacts.tgz /root/hakaru/app
+
+/tmp/artifacts.tgz:
+	aws s3 cp s3://$(ARTIFACTS_BUCKET)/$(ARTIFACTS_COMMIT)/artifacts.tgz /tmp/artifacts.tgz
+
+/root/hakaru/app: /tmp/artifacts.tgz
+	mkdir -p /root/hakaru/app
+	tar xzvf /tmp/artifacts.tgz -C /root/hakaru/app
