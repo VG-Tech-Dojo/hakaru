@@ -39,13 +39,13 @@
         "collect_list": [
           {
             "file_path": "/var/log/messages",
-            "log_group_name": "/hakaru/messages",
+            "log_group_name": "/hakaru/var/log/messages",
             "timestamp_format": "%b %-d %H:%M:%S",
             "timezone": "Local"
           },
           {
             "file_path": "/var/log/secure",
-            "log_group_name": "/hakaru/secure",
+            "log_group_name": "/hakaru/var/log/secure",
             "timestamp_format": "%b %-d %H:%M:%S",
             "timezone": "Local"
           }

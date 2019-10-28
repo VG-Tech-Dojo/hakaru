@@ -1,4 +1,4 @@
-# provisioning (run only in building ami)
+# provisioning (run only in ami building)
 #
 # パッケージのインストール等はここでやる
 #
@@ -17,14 +17,12 @@ yum:
 	yum -y --enablerepo=mysql56-community install mysql-community-client
 	yum -y install java-1.8.0-openjdk
 	yum -y install https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+	yum -y install https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 
 /root/hakaru:
 	mkdir -p /root/hakaru
 
-/root/hakaru/team_name.txt: deploy/team_name.txt /root/hakaru
-	cp deploy/team_name.txt /root/hakaru/team_name.txt
-
-/root/hakaru/Makefile: deploy/Makefile /root/hakaru/team_name.txt /root/hakaru
+/root/hakaru/Makefile: deploy/Makefile /root/hakaru
 	cp deploy/Makefile /root/hakaru/Makefile
 
 app: /root/hakaru/Makefile

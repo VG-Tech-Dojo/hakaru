@@ -2,9 +2,9 @@
   "description": "hakaru app",
 
   "variables": {
-    "AWS_ACCOUNT_ID": "079580777458",
-    "subnet_id": "subnet-09a40cdec88009940",
-    "security_group_id": "sg-0de626f4b530b5486"
+    "AWS_ACCOUNT_ID": "アカウントID",
+    "subnet_id": "パブリックのサブネットID",
+    "security_group_id": "hakaruと名付けられたセキュリティグループID"
   },
 
   "builders": [
@@ -24,7 +24,7 @@
         "SourceAMI": "{{ .SourceAMI }}",
         "SourceAMIName": "{{ .SourceAMIName }}"
       },
-      "source_ami": "ami-0a2de1c3b415889d2",
+      "source_ami": "ami-0c3fd0f5d33134a76",
 
       "subnet_id": "{{user  `subnet_id`}}",
       "security_group_id": "{{user `security_group_id`}}",

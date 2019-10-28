@@ -1,4 +1,5 @@
-TEAMNAME := $(shell head -n1 team_name.txt)
+export AWS_PROIFLE        ?= sunrise201911
+export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all install imports fmt test run build clean upload
 
@@ -45,12 +46,9 @@ mysql_run:
 
 # deployment
 
-artifacts.tgz: db team_name.txt provisioning/instance
+artifacts.tgz: provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
 	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
-
-export AWS_PROFILE        ?= $(TEAMNAME)
-export AWS_DEFAULT_REGION := ap-northeast-1
 
 ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
 
