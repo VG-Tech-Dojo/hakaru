@@ -1,4 +1,4 @@
-CREATE TABLE `eventlog` (
+CREATE TABLE IF NOT EXISTS `eventlog` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `at` datetime DEFAULT NULL,
   `name` varchar(255) NOT NULL,
