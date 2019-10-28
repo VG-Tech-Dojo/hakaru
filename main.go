@@ -13,7 +13,7 @@ import (
 func main() {
 	dataSourceName := os.Getenv("HAKARU_DATASOURCENAME")
 	if dataSourceName == "" {
-		dataSourceName = "root:hakaru-pass@tcp(127.0.0.1:13306)/hakaru-db"
+		dataSourceName = "root:password@tcp(127.0.0.1:13306)/hakaru"
 	}
 
 	hakaruHandler := func(w http.ResponseWriter, r *http.Request) {

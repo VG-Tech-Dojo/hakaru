@@ -2,15 +2,16 @@
   "description": "kakeru app",
 
   "variables": {
-    "AWS_ACCOUNT_ID": "139990579284",
-    "subnet_id": "subnet-07f0657a9db896e1a",
-    "security_group_id": "sg-0d880f207a5d393d4"
+    "AWS_ACCOUNT_ID": "アカウントID",
+    "subnet_id": "パブリックのサブネットID",
+    "security_group_id": "kakeruと名付けられたセキュリティグループID"
   },
 
   "builders": [
     {
       "type": "amazon-ebs",
-      "profile": "{{user `TEAMNAME`}}",
+      "access_key": "{{user `aws_access_key`}}",
+      "secret_key": "{{user `aws_secret_key`}}",
       "region": "ap-northeast-1",
 
       "ami_name": "kakeru - {{isotime \"20060102150405\"}}",
@@ -31,7 +32,7 @@
       "ssh_username": "ubuntu",
       "ssh_interface": "public_ip",
       "instance_type": "t3.micro",
-      "iam_instance_profile": "kakeru-ec2",
+      "iam_instance_profile": "kakeru",
       "sriov_support": true,
       "ena_support": true,
       "user_data_file": "{{template_dir}}/scripts/cloud.cfg.d/99_defaults.cfg"
@@ -60,9 +61,6 @@
         "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
         "rm -rf /var/tmp/scripts.tgz",
         "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}",
-        "sudo mkdir /opt/kakeru",
-        "sudo cp /var/tmp/scripts/deploy/Makefile /opt/kakeru/Makefile",
-        "sudo cp /var/tmp/scripts/deploy/team_name.txt /opt/kakeru/team_name.txt",
         "sudo chown -R ubuntu:ubuntu /opt/kakeru"
       ]
     }

@@ -1,7 +1,6 @@
 export AWS_DEFAULT_REGION ?= ap-northeast-1
 
-TEAMNAME := $(shell head -n1 ../team_name.txt)
-KAKERU_REPORT := $(TEAMNAME)-kakeru-report
+REPORT_BUCKET := sunrise201911-kakeru-report
 
 HOST:=localhost
 PORT:=80
@@ -11,8 +10,6 @@ SLAVES:=4
 TEST_FILE:=tmp/hakaru-test.xml
 
 SCENARIO=1
-
-REPORT_BUCKET:=$(TEAMNAME)-kakeru-report
 
 API_KEY:=please_specify
 

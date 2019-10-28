@@ -1,14 +1,12 @@
 # packer wrapper
 #
 
-TEAMNAME := $(shell head -n1 ../../team_name.txt)
-
-export AWS_PROFILE        ?= $(TEAMNAME)
+export AWS_PROFILE        ?= sunrise201911
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 #ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
 ARTIFACTS_COMMIT := latest
-ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
+ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # https://hub.docker.com/r/hashicorp/packer/tags/
 PACKER_VERSION := 1.3.2
@@ -17,14 +15,11 @@ PACKER_VERSION := 1.3.2
 
 all: clean build
 
-scripts/deploy/team_name.txt: ../../team_name.txt
-	cp ../../team_name.txt scripts/deploy/team_name.txt
-
-scripts.tgz: scripts scripts/deploy/team_name.txt
+scripts.tgz: scripts
 	tar cvzf scripts.tgz -C scripts .
 
 clean:
-	-rm -rf *.tgz scripts/deploy/team_name.txt
+	-rm -rf *.tgz
 
 build: scripts.tgz
 	docker run --rm -it \

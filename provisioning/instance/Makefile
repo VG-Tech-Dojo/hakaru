@@ -19,8 +19,8 @@ clean:
 	cp ../../hakaru /opt/hakaru/bin/hakaru
 	chmod +x /opt/hakaru/bin/hakaru
 
-/etc/sysconfig/hakaru: sysconfig/hakaru
-	cp sysconfig/hakaru /etc/sysconfig/hakaru
+/etc/sysconfig/hakaru:
+	echo "HAKARU_DATASOURCENAME=hakaru:$$(aws ssm get-parameter --name "/hakaru/rds/hakaru/password" --with-decryption --output text --query Parameter.Value)#@tcp($$(aws rds describe-db-instances --db-instance-identifier hakaru --output text --query "DBInstances[0].Endpoint.Address"))/hakaru" > /etc/sysconfig/hakaru
 
 /etc/systemd/system/hakaru.service: systemd/hakaru.service /opt/hakaru/bin/hakaru /etc/sysconfig/hakaru
 	cp systemd/hakaru.service /etc/systemd/system/hakaru.service

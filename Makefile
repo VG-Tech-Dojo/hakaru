@@ -1,4 +1,5 @@
-TEAMNAME := $(shell head -n1 team_name.txt)
+export AWS_PROIFLE        ?= sunrise201911
+export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all install imports fmt test run build clean upload
 
@@ -28,16 +29,28 @@ build: test
 clean:
 	rm -rf hakaru *.tgz
 
+# lcoal mysqld on docker
+
+mysql_run:
+	docker run --rm -d \
+	  --name sunrise2019-hakaru-db \
+	  -e MYSQL_ROOT_PASSWORD=password \
+	  -e MYSQL_DAATBASE=hakaru \
+	  -e TZ=Asia/Tokyo \
+	  -p 13306:3306 \
+	  -v $(CURDIR)/db/data:/var/lib/mysql \
+	  -v $(CURDIR)/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro \
+	  -v $(CURDIR)/db/init:/docker-entrypoint-initdb.d:ro \
+	  mysql:5.6 \
+	  mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
 # deployment
 
-artifacts.tgz: db team_name.txt provisioning/instance
+artifacts.tgz: provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
-	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
+	tar czf artifacts.tgz hakaru db provisioning/instance
 
-export AWS_PROFILE        ?= $(TEAMNAME)
-export AWS_DEFAULT_REGION := ap-northeast-1
-
-ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
+ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # ci からアップロードできなくなった場合のターゲット
 upload: clean artifacts.tgz
