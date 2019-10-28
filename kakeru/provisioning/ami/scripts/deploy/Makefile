@@ -5,8 +5,7 @@
 # NOTE: make 実行中に Makefile を更新されるのを避けるため分割している
 #
 
-TEAMNAME := $(shell head -n1 team_name.txt)
-
+ARTIFACTS_BUCKET ?= sunrise201911-kakeru-artifacts
 ARTIFACTS_COMMIT ?= latest
 
 
@@ -15,7 +14,7 @@ clean:
 	-rm -rf /tmp/kakeru.zip /opt/kakeru/app
 
 /tmp/kakeru.zip:
-	aws s3 cp s3://$(TEAMNAME)-kakeru-artifacts/$(ARTIFACTS_COMMIT)/kakeru.zip /tmp/kakeru.zip
+	aws s3 cp s3://$(ARTIFACTS_BUCKET)/$(ARTIFACTS_COMMIT)/kakeru.zip /tmp/kakeru.zip
 
 
 /opt/kakeru:
