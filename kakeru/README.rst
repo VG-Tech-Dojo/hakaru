@@ -17,7 +17,7 @@
 AMI焼き
 -------
 
-sunrise2019/kakeru/provisioning/ami/packer.json の部分を環境に合わせて変更する。
+provisioning/ami/packer.json の部分を環境に合わせて変更する。
 その後以下のコマンドを実行するとAMIが焼かれる。
 
 ::
