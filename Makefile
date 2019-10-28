@@ -48,9 +48,9 @@ mysql_run:
 
 artifacts.tgz: provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
-	tar czf artifacts.tgz hakaru db team_name.txt provisioning/instance
+	tar czf artifacts.tgz hakaru db provisioning/instance
 
-ARTIFACTS_BUCKET := $(TEAMNAME)-hakaru-artifacts
+ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # ci からアップロードできなくなった場合のターゲット
 upload: clean artifacts.tgz
