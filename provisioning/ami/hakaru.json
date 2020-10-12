@@ -2,9 +2,9 @@
   "description": "hakaru app",
 
   "variables": {
-    "AWS_ACCOUNT_ID": "アカウントID",
-    "subnet_id": "パブリックのサブネットID",
-    "security_group_id": "hakaruと名付けられたセキュリティグループID"
+    "AWS_ACCOUNT_ID": "960795770068",
+    "subnet_id": "subnet-0de64b8220d2008f4",
+    "security_group_id": "sg-0bf3376b35067d72b"
   },
 
   "builders": [
@@ -24,13 +24,13 @@
         "SourceAMI": "{{ .SourceAMI }}",
         "SourceAMIName": "{{ .SourceAMIName }}"
       },
-      "source_ami": "ami-0c3fd0f5d33134a76",
+      "source_ami": "ami-0cc75a8978fbbc969",
 
       "subnet_id": "{{user  `subnet_id`}}",
       "security_group_id": "{{user `security_group_id`}}",
       "associate_public_ip_address": true,
       "ssh_username": "ec2-user",
-      "ssh_interface": "public_ip",
+      "ssh_interface": "session_manager",
       "instance_type": "t3.micro",
       "iam_instance_profile": "hakaru",
       "sriov_support": true,
@@ -58,7 +58,7 @@
         "mkdir -p /var/tmp/scripts",
         "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
         "rm -rf /var/tmp/scripts.tgz",
-        "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
+        "sudo make -C /var/tmp/scripts/hakaru ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}"
       ]
     },
 

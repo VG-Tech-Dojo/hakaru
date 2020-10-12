@@ -6,8 +6,8 @@
 
 all: cloud-config apt awscli ssh ulimit deploy
 
-cloud-config: cloud.cfg.d/99_defaults.cfg
-	cp cloud.cfg.d/99_defaults.cfg /etc/cloud/cloud.cfg.d/
+cloud-config: ../cloud.cfg.d/99_defaults.cfg
+	cp $< /etc/cloud/cloud.cfg.d/
 	chmod 0644 /etc/cloud/cloud.cfg.d/99_defaults.cfg
 	chown -R root:root /etc/cloud/cloud.cfg.d/99_defaults.cfg
 
@@ -48,7 +48,7 @@ ulimit:
 # /opt/kakeru/Makefile on ec2 instance
 #
 
-ARTIFACTS_BUCKET ?= sunrise201911-kakeru-artifacts
+ARTIFACTS_BUCKET ?= sunrise2020-y-kakeru-artifacts
 ARTIFACTS_COMMIT ?= latest
 
 deploy: clean /opt/kakeru/app
