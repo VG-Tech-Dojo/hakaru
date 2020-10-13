@@ -1,4 +1,4 @@
-export AWS_PROIFLE        ?= sunrise201911
+export AWS_PROFILE        ?= sunrise2020-y
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all install imports fmt test run build clean upload

@@ -2,9 +2,9 @@
   "description": "kakeru app",
 
   "variables": {
-    "AWS_ACCOUNT_ID": "アカウントID",
-    "subnet_id": "パブリックのサブネットID",
-    "security_group_id": "kakeruと名付けられたセキュリティグループID"
+    "AWS_ACCOUNT_ID": "960795770068",
+    "subnet_id": "subnet-0082f0a319b92f191",
+    "security_group_id": "sg-0e748c83b081f10af"
   },
 
   "builders": [
@@ -24,13 +24,13 @@
         "SourceAMI": "{{ .SourceAMI }}",
         "SourceAMIName": "{{ .SourceAMIName }}"
       },
-      "source_ami": "ami-0238fc6af6bba5241",
+      "source_ami": "ami-002f145bfc0915873",
 
       "subnet_id": "{{user  `subnet_id`}}",
       "security_group_id": "{{user `security_group_id`}}",
       "associate_public_ip_address": true,
       "ssh_username": "ubuntu",
-      "ssh_interface": "public_ip",
+      "ssh_interface": "session_manager",
       "instance_type": "t3.micro",
       "iam_instance_profile": "kakeru",
       "sriov_support": true,
@@ -60,7 +60,7 @@
         "mkdir -p /var/tmp/scripts",
         "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
         "rm -rf /var/tmp/scripts.tgz",
-        "sudo make -C /var/tmp/scripts ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}",
+        "sudo make -C /var/tmp/scripts/kakeru ARTIFACTS_COMMIT={{user `ARTIFACTS_COMMIT`}}",
         "sudo chown -R ubuntu:ubuntu /opt/kakeru"
       ]
     }
