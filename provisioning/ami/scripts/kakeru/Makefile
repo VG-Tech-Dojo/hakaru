@@ -4,7 +4,7 @@
 #
 .PHONY: all cloud-config apt awscli ssh ulimit
 
-all: cloud-config apt awscli ssh ulimit deploy
+all: cloud-config apt awscli ssh ulimit app
 
 cloud-config: ../cloud.cfg.d/99_defaults.cfg
 	cp $< /etc/cloud/cloud.cfg.d/
@@ -42,6 +42,8 @@ ulimit:
 
 /opt/kakeru/Makefile: Makefile
 	cp Makefile /opt/kakeru/Makefile
+
+app: /opt/kakeru/Makefile
 
 # application deployment
 #

@@ -22,8 +22,8 @@ provisioning/ami/packer.json の部分を環境に合わせて変更する。
 
 ::
 
-   $ cd provisioning/ami
-   $ make
+   $ cd ../provisioning/ami
+   $ make TO=kakeru
 
 
 シングルノードでの実行
@@ -33,6 +33,7 @@ provisioning/ami/packer.json の部分を環境に合わせて変更する。
 ------------------
 
 すでにあるはずの kakeru vpc やセキュリティグループを指定してインスタンスを立てる。
+
 
 負荷を掛ける
 ------------
@@ -44,7 +45,7 @@ provisioning/ami/packer.json の部分を環境に合わせて変更する。
 
 ::
 
-   $ ssh -i ${インスタンスを立てたときの.pem} ubuntu@${対象インスタンスのipv4 dns名}
+   インスタンスへの接続 -> https://github.com/voyagegroup/sunrise2020/blob/master/docs/session.md
    # cd /opt/kakeru
    # make deploy # artifactsからアプリケーション配備するやつ
    # make -C app kakeru upload HOST=${ELBエンドポイントのドメイン} SCENARIO=${1,2,3}
@@ -99,7 +100,7 @@ ASGのdesiredを ``希望する台数+1`` にしてインスタンスを立て�
 
 ::
 
-   $ ssh -i ${インスタンスを立てたときの.pem} ubuntu@${いずれかのインスタンス}
+   インスタンスへの接続 -> https://github.com/voyagegroup/sunrise2020/blob/master/docs/session.md
    # cd /opt/kakeru
    # make deploy
 
