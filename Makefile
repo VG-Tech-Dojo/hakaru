@@ -1,7 +1,7 @@
 export AWS_PROFILE        ?= sunrise2020-y
 export AWS_DEFAULT_REGION := ap-northeast-1
 
-.PHONY: all install imports fmt test run build clean upload
+.PHONY: all install deps deps-update fmt test run build clean upload
 
 GOOS   ?=
 GOARCH ?=
@@ -11,8 +11,11 @@ all: install run
 
 install:
 
-imports:
-	goimports -w .
+deps:
+	go mod download
+
+deps-update:
+	go get -v -t ./...
 
 fmt:
 	gofmt -w .
@@ -23,7 +26,7 @@ test:
 run: main.go
 	go run main.go
 
-build: test
+build: deps test
 	GOOS=$(GOOS) GOARCH=$(GOARCH) go build -o hakaru
 
 clean:
