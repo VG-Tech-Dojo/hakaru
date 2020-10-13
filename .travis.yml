@@ -9,16 +9,16 @@ branches:
 language: go
 
 go:
-  - "1.13"
+  - "1.15"
 
 env:
   global:
     - GOOS=linux
     - GOARCH=amd64
+    - GO111MODULE=on
 
 cache:
   directories:
-  - vendor
   - $GOPATH/bin
 
 before_install:
