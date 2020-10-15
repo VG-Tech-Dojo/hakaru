@@ -36,7 +36,7 @@ clean:
 
 mysql_run:
 	docker run --rm -d \
-	  --name sunrise2019-hakaru-db \
+	  --name sunrise2020-hakaru-db \
 	  -e MYSQL_ROOT_PASSWORD=password \
 	  -e MYSQL_DAATBASE=hakaru \
 	  -e TZ=Asia/Tokyo \
@@ -51,7 +51,7 @@ mysql_run:
 
 artifacts.tgz: provisioning/instance
 	$(MAKE) build GOOS=linux GOARCH=amd64
-	tar czf artifacts.tgz hakaru db provisioning/instance
+	tar czf artifacts.tgz hakaru provisioning/instance
 
 ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
