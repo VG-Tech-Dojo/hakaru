@@ -4,6 +4,10 @@
 #
 .PHONY: all cloud-config yum app
 
+export AWS_DEFAULT_REGION := ap-northeast-1
+export AWS_DEFAULT_OUTPUT := text
+export AWS_PAGER          :=
+
 all: cloud-config yum app
 
 cloud-config: ../cloud.cfg.d/99_defaults.cfg
