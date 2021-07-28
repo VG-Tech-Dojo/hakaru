@@ -1,4 +1,4 @@
-variables artifacts_commit {
+variable ARTIFACTS_COMMIT {
   type    = string
   default = "latest"
 }
@@ -8,10 +8,10 @@ data "amazon-ami" "amzn2" {
   owners      = ["137112412989"]
   region      = "ap-northeast-1"
   filters     = {
-    architecture     = "x86_64"
-    name             = "amzn2-ami-hvm-2.0"
-    root-device-type = "ebs"
-    virtualization   = "hvm"
+    architecture        = "x86_64"
+    name                = "amzn2-ami-hvm-2.0*"
+    root-device-type    = "ebs"
+    virtualization-type = "hvm"
   }
 }
 

@@ -7,9 +7,10 @@ source "amazon-ebs" "hakaru" {
   sriov_support   = true
 
   tags            = {
+    Name          = "hakaru"
     Timestamp     = timestamp()
-    SourceAMI     = source.SourceAMI
-    SourceAMIName = source.SourceAMIName
+    SourceAMI     = "{{ .SourceAMI }}"
+    SourceAMIName = "{{ .SourceAMIName }}"
   }
 
   instance_type               = "t3.micro"
@@ -30,7 +31,7 @@ source "amazon-ebs" "hakaru" {
     most_free = true
     random    = false
     filters   = {
-      "tag:Name" = "hakaru-public"
+      "tag:Name" = "hakaru-public-ap-northeast-1*"
     }
   }
 
@@ -60,7 +61,7 @@ build {
       "mkdir -p /var/tmp/scripts",
       "tar xvzf /var/tmp/scripts.tgz -C /var/tmp/scripts",
       "rm -rf /var/tmp/scripts.tgz",
-      "sudo make -C /var/tmp/scripts/hakaru ARTIFACTS_COMMIT=${var.artifacts_commit}"
+      "sudo make -C /var/tmp/scripts/hakaru ARTIFACTS_COMMIT=${var.ARTIFACTS_COMMIT}"
     ]
   }
 

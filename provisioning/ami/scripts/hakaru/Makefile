@@ -17,11 +17,12 @@ cloud-config: ../cloud.cfg.d/99_defaults.cfg
 
 yum:
 	yum -y update
-	yum -y install https://dev.mysql.com/get/mysql-community-release-el7-5.noarch.rpm
-	yum -y --enablerepo=mysql56-community install mysql-community-client
-	yum -y install java-1.8.0-openjdk
+	yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+	yum-config-manager --disable mysql80-community
+	yum-config-manager --enable mysql57-community
+	yum -y install mysql-community-client
 	yum -y install https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
-	-yum -y install https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+	yum -y install https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
 
 /root/hakaru:
 	mkdir -p /root/hakaru
