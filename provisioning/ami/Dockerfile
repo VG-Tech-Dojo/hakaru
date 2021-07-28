@@ -1,6 +1,6 @@
 FROM debian:buster-slim
 
-ARG VERSION=1.6.4
+ARG VERSION=1.7.4
 RUN set -x \
     && apt-get update \
     && apt-get install -y curl ca-certificates gnupg lsb-release software-properties-common \
@@ -18,4 +18,3 @@ RUN set -x \
 RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/usr/bin/packer"]
-

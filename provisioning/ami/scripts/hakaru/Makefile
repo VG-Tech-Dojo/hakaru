@@ -36,7 +36,7 @@ app: /root/hakaru/Makefile
 # /root/hakaru/Makefile on ec2 instance
 #
 
-ARTIFACTS_BUCKET ?= sunrise2020-y-hakaru-artifacts
+ARTIFACTS_BUCKET ?= sunrise2021-x-hakaru-artifacts
 ARTIFACTS_COMMIT ?= latest
 
 deploy: clean /root/hakaru/app
