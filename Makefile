@@ -1,4 +1,4 @@
-export AWS_PROFILE        ?= sunrise2021-x
+export AWS_PROFILE        ?= sunrise2021-z
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all deps update fmt test run build clean db upload

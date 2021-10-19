@@ -1,13 +1,13 @@
 SHELL := /bin/bash
 
-AWS_PROFILE ?= sunrise2021-x
+AWS_PROFILE ?= sunrise2021-z
 
 #ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
 ARTIFACTS_COMMIT := latest
 ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # https://hub.docker.com/r/hashicorp/packer/tags/
-PACKER_VERSION := 1.7.4
+PACKER_VERSION := 1.7.6
 
 PACKER_IMAGE := sunrise2021/packer:$(PACKER_VERSION)
 
@@ -29,6 +29,7 @@ packer = docker run --rm -it \
   --env-file <(aws-vault exec $(AWS_PROFILE) -- env | grep "AWS_" | grep -v "AWS_VAULT") \
   -e TZ=Asia/Tokyo \
   -v $(CURDIR):/work \
+  -v $(CURDIR)/packer_config:/root/.config/packer \
   -w /work \
   $(PACKER_IMAGE)
 
