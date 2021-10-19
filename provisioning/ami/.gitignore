@@ -1,3 +1,5 @@
 packer_cache/
+packer_config/
+!packer_config/.gitkeep
 
 *.tgz

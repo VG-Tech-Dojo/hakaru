@@ -6,11 +6,12 @@ source "amazon-ebs" "hakaru" {
   ena_support     = true
   sriov_support   = true
 
-  tags            = {
-    Name          = "hakaru"
-    Timestamp     = timestamp()
-    SourceAMI     = "{{ .SourceAMI }}"
-    SourceAMIName = "{{ .SourceAMIName }}"
+  tags = {
+    Name                             = "hakaru"
+    Timestamp                        = timestamp()
+    SourceAMI                        = "{{ .SourceAMI }}"
+    SourceAMIName                    = "{{ .SourceAMIName }}"
+    Amazon_AMI_Management_Identifier = "hakaru"
   }
 
   instance_type               = "t3.micro"

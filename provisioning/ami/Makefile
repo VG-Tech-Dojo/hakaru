@@ -29,6 +29,7 @@ packer = docker run --rm -it \
   --env-file <(aws-vault exec $(AWS_PROFILE) -- env | grep "AWS_" | grep -v "AWS_VAULT") \
   -e TZ=Asia/Tokyo \
   -v $(CURDIR):/work \
+  -v $(CURDIR)/packer_config:/root/.config/packer \
   -w /work \
   $(PACKER_IMAGE)
 
