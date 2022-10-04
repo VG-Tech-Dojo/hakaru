@@ -1,4 +1,4 @@
-export AWS_PROFILE        ?= sunrise2021-z
+export AWS_PROFILE        ?= sunrise2022-z
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all deps update fmt test run build clean db upload
@@ -34,7 +34,7 @@ clean:
 
 db:
 	docker run --rm -d \
-	  --name sunrise2021-hakaru-db \
+	  --name sunrise2022-hakaru-db \
 	  -e MYSQL_ROOT_PASSWORD=password \
 	  -e MYSQL_DATABASE=hakaru \
 	  -e TZ=Asia/Tokyo \

@@ -18,6 +18,7 @@ cloud-config: ../cloud.cfg.d/99_defaults.cfg
 yum:
 	yum -y update
 	yum -y install https://dev.mysql.com/get/mysql80-community-release-el7-3.noarch.rpm
+	rpm --import https://repo.mysql.com/RPM-GPG-KEY-mysql-2022
 	yum-config-manager --disable mysql80-community
 	yum-config-manager --enable mysql57-community
 	yum -y install mysql-community-client
@@ -37,7 +38,7 @@ app: /root/hakaru/Makefile
 # /root/hakaru/Makefile on ec2 instance
 #
 
-ARTIFACTS_BUCKET ?= sunrise2021-z-hakaru-artifacts
+ARTIFACTS_BUCKET ?= sunrise2022-z-hakaru-artifacts
 ARTIFACTS_COMMIT ?= latest
 
 deploy: clean /root/hakaru/app
