@@ -1,6 +1,6 @@
-FROM debian:buster-slim
+FROM amd64/debian:buster-slim
 
-ARG VERSION=1.8.3-1
+ARG VERSION=1.9.2-1
 RUN set -x \
     && apt-get update \
     && apt-get install -y curl ca-certificates gnupg lsb-release software-properties-common \

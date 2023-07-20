@@ -27,10 +27,11 @@ $ make
 ### launch EC2 instance
 
 - インスタンスタイプ: c5.large
+- キーペア: sunrise20XX
 - VPC: hakaru
 - サブネット: プライベートサブネット
 - セキュリティグループ: hakaru
-- iam: hakaru
+- IAMインスタンスプロフィール: hakaru
 - ユーザデータに ./user_data.sh の内容を記述する
 
 ### blue/green deployment
