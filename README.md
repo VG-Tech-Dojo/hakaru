@@ -27,7 +27,7 @@ $ make
 ### launch EC2 instance
 
 - インスタンスタイプ: c5.large
-- キーペア: sunrise20XX
+- キーペア: sunrise2023
 - VPC: hakaru
 - サブネット: プライベートサブネット
 - セキュリティグループ: hakaru
