@@ -13,7 +13,7 @@ RUN set -x \
 
 RUN set -x \
     && ARCH=$(if [ "${TARGETARCH}" = "amd64" ]; then echo "64bit"; else echo "arm64"; fi) \
-    && curl -fsSL -O "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_${ARCH}/session-manager-plugin.deb"; fi \
+    && curl -fsSL -O "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_${ARCH}/session-manager-plugin.deb" \
     && dpkg -i session-manager-plugin.deb \
     && rm session-manager-plugin.deb \
     && session-manager-plugin
