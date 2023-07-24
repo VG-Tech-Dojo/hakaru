@@ -1,7 +1,7 @@
 # https://www.packer.io/docs/builders/amazon/ebs
 source "amazon-ebs" "hakaru" {
   ami_name        = format("hakaru - %s", local.image_time)
-  ami_description = "sunrise2022 hakaru server"
+  ami_description = "sunrise2023 hakaru server"
   region          = "ap-northeast-1"
   ena_support     = true
   sriov_support   = true

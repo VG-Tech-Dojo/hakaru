@@ -1,4 +1,4 @@
-export AWS_PROFILE        ?= sunrise2022-z
+export AWS_PROFILE        ?= sunrise2023-z
 export AWS_DEFAULT_REGION := ap-northeast-1
 
 .PHONY: all deps update fmt test run build clean db upload
@@ -34,7 +34,7 @@ clean:
 
 db:
 	docker run --rm -d \
-	  --name sunrise2022-hakaru-db \
+	  --name sunrise2023-hakaru-db \
 	  -e MYSQL_ROOT_PASSWORD=password \
 	  -e MYSQL_DATABASE=hakaru \
 	  -e TZ=Asia/Tokyo \
@@ -42,8 +42,8 @@ db:
 	  -v $(CURDIR)/db/data:/var/lib/mysql \
 	  -v $(CURDIR)/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro \
 	  -v $(CURDIR)/db/init:/docker-entrypoint-initdb.d:ro \
-	  mysql:5.7 \
-	  mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+	  mysql:8.0.33 \
+	  mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci
 
 # deployment
 
