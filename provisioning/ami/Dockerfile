@@ -12,8 +12,8 @@ RUN set -x \
     && apt-get install packer=${VERSION}
 
 RUN set -x \
-    && if [ "${TARGETARCH}" = "amd64" ]; then  curl -fsSL -O "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb"; fi \
-    && if [ "${TARGETARCH}" = "arm64" ]; then  curl -fsSL -O "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_arm64/session-manager-plugin.deb"; fi \
+    && ARCH=$(if [ "${TARGETARCH}" = "amd64" ]; then echo "64bit"; else echo "arm64"; fi) \
+    && curl -fsSL -O "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_${ARCH}/session-manager-plugin.deb"; fi \
     && dpkg -i session-manager-plugin.deb \
     && rm session-manager-plugin.deb \
     && session-manager-plugin
