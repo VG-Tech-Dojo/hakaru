@@ -1,13 +1,16 @@
-FROM debian:buster-slim
+FROM debian:bookworm-slim
 
 ARG TARGETARCH
-ARG VERSION=1.9.2-1
+ARG VERSION=1.11.2-1
 
+# hashicorp.list 作るコマンドは以下が公式ドキュメントに沿ったやり方だが、既知のバグがあるので回避
+#   `apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`
+# refs. https://unix.stackexchange.com/questions/776941/apt-add-repository-needs-to-run-twice-on-debian-12
 RUN set -x \
     && apt-get update \
     && apt-get install -y curl ca-certificates gnupg lsb-release software-properties-common \
     && curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - \
-    && apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" \
+    && echo "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list \
     && apt-get update \
     && apt-get install packer=${VERSION}
 
