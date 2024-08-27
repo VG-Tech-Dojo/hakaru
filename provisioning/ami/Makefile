@@ -1,15 +1,15 @@
 SHELL := /bin/bash
 
-AWS_PROFILE ?= sunrise2023-z
+AWS_PROFILE ?= sunrise2024-z
 
 #ARTIFACTS_COMMIT ?= $(shell git rev-parse HEAD)
 ARTIFACTS_COMMIT := latest
 ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # https://hub.docker.com/r/hashicorp/packer/tags/
-PACKER_VERSION := 1.9.2-1
+PACKER_VERSION := 1.11.2-1
 
-PACKER_IMAGE := sunrise2023/packer:$(PACKER_VERSION)
+PACKER_IMAGE := sunrise2024/packer:$(PACKER_VERSION)
 
 .PHONY: all clean build scripts.tgz docker
 
