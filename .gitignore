@@ -4,5 +4,6 @@
 hakaru
 *.tgz
 
-/db/data
-!/db/data/.gitkeep
+!/db/.data
+db/.data/*
+!/db/.data/.gitkeep
