@@ -48,7 +48,7 @@ db:
 # deployment
 
 artifacts.tgz: provisioning/instance
-	$(MAKE) build GOOS=linux GOARCH=amd64
+	$(MAKE) build GOOS=linux GOARCH=amd64 CGO_ENABLED=0
 	tar czf artifacts.tgz hakaru provisioning/instance
 
 aws := $(if $(CI),aws,aws-vault exec $(AWS_PROFILE) -- aws)
