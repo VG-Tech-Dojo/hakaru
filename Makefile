@@ -39,7 +39,7 @@ db:
 	  -e MYSQL_DATABASE=hakaru \
 	  -e TZ=Asia/Tokyo \
 	  -p 13306:3306 \
-	  -v $(CURDIR)/db/data:/var/lib/mysql \
+	  -v $(CURDIR)/db/.data:/var/lib/mysql \
 	  -v $(CURDIR)/db/my.cnf:/etc/mysql/conf.d/my.cnf:ro \
 	  -v $(CURDIR)/db/init:/docker-entrypoint-initdb.d:ro \
 	  mysql:8.0.33 \
