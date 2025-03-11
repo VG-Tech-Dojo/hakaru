@@ -1,7 +1,7 @@
 FROM debian:bookworm-slim
 
 ARG TARGETARCH
-ARG VERSION=1.11.2-1
+ARG VERSION=1.12.0
 
 # hashicorp.list 作るコマンドは以下が公式ドキュメントに沿ったやり方だが、既知のバグがあるので回避
 #   `apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"`

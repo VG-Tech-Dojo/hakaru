@@ -7,7 +7,7 @@ ARTIFACTS_COMMIT := latest
 ARTIFACTS_BUCKET := $(AWS_PROFILE)-hakaru-artifacts
 
 # https://hub.docker.com/r/hashicorp/packer/tags/
-PACKER_VERSION := 1.11.2-1
+PACKER_VERSION := 1.12.0
 
 PACKER_IMAGE := sunrise2025/packer:$(PACKER_VERSION)
 
